@@ -1,13 +1,15 @@
 import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 
 /**
- * Created by Kimberly Orr on 8/29/18
+ * Created by Kimberly Orr on 8/29/18.
  * Class to generate traffic for the network including arrival times,
  * connection length, source and destination nodes, and bandwidth.
  */
 public class TrafficGenerator {
     private double[] arrivals;
     private double[] connectionLengths;
+    private double[] sourcesAndDestinations; //2 arrays or one?
 
     public TrafficGenerator() {
         arrivals = new double[0];
@@ -33,8 +35,14 @@ public class TrafficGenerator {
      */
     public double[] getArrivals() { return arrivals; }
     public double[] getConnectionLengths() { return connectionLengths; }
+    public double[] getSourcesAndDestinations() {
+        return sourcesAndDestinations;
+    }
     public void setArrivals(double[] arrivals) { this.arrivals = arrivals; }
     public void setConnectionLengths(double[] connectionLengths) { this.connectionLengths = connectionLengths; }
+    public void setSourcesAndDestinations(double[] sourcesAndDestinations) {
+        this.sourcesAndDestinations = sourcesAndDestinations;
+    }
 
     public String toString() {
         String arrs = "";
@@ -76,5 +84,21 @@ public class TrafficGenerator {
             connections[i] = exp.sample();
         }
         return connections;
+    }
+
+    /**
+     * Generate source and destination nodes for each observation.
+     * Source and Destination cannot be the same node. Do I want to separate into 2 different
+     * functions/2 arrays? If this were python, I'd return a list of tuple pairs (s, d).
+     * Does it make more sense to return a list of sources and a list of destinations or return
+     * a list with paired source and destination nodes for each observation?
+     * @param obs
+     * @param numNodes
+     * @return
+     */
+    private double[] generateSourceAndDestinationNode(int obs, int numNodes) {
+        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes-1);
+        double[] srcAndDest = new double[obs];
+        return srcAndDest;
     }
 }
