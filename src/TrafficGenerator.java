@@ -6,7 +6,6 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
  * connection length, source and destination nodes, and bandwidth.
  */
 public class TrafficGenerator {
-    private double avgArrivalTime;
     private double[] arrivals;
     private double[] connectionLengths;
 
@@ -14,21 +13,29 @@ public class TrafficGenerator {
         arrivals = new double[0];
     }
 
+    public TrafficGenerator(int observations) {
+        this.arrivals = generateArrivals(observations, 5);
+        this.connectionLengths = generateConnectionLengths(observations, 1);
+    }
+
     public TrafficGenerator(int observations, double avgArrivalTime) {
-        this.avgArrivalTime = avgArrivalTime;
+        this.arrivals = generateArrivals(observations, avgArrivalTime);
+        this.connectionLengths = generateConnectionLengths(observations, 1);
+    }
+
+    public TrafficGenerator(int observations, double avgArrivalTime, double avgServiceTime) {
         arrivals = generateArrivals(observations, avgArrivalTime);
-        //connectionLengths = generateConnectionLengths(observations);
+        connectionLengths = generateConnectionLengths(observations, avgServiceTime);
     }
 
     /**
      * Getters, setters, toString
      */
-    public double getAvgArrivalTime() { return avgArrivalTime; }
     public double[] getArrivals() { return arrivals; }
     public double[] getConnectionLengths() { return connectionLengths; }
-    public void setAvgArrivalTime(double avgArrivalTime) { this.avgArrivalTime = avgArrivalTime; }
     public void setArrivals(double[] arrivals) { this.arrivals = arrivals; }
     public void setConnectionLengths(double[] connectionLengths) { this.connectionLengths = connectionLengths; }
+
     public String toString() {
         String arrs = "";
         for(int i=0; i<arrivals.length; i++) {
@@ -56,6 +63,12 @@ public class TrafficGenerator {
         return arrivals;
     }
 
+    /**
+     * Generate the connection lengths.
+     * @param obs
+     * @param avgServiceTime
+     * @return
+     */
     private double[] generateConnectionLengths(int obs, double avgServiceTime) {
         ExponentialDistribution exp = new ExponentialDistribution(avgServiceTime);
         double[] connections = new double[obs];

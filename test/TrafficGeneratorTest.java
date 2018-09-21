@@ -10,7 +10,8 @@ class TrafficGeneratorTest {
 
     @Test
     void generateArrivals() {
-        TrafficGenerator obs100000 = new TrafficGenerator(100000, 4);
+        double avgArrivalTime = 4;
+        TrafficGenerator obs100000 = new TrafficGenerator(100000, avgArrivalTime);
         double[] arrivals = obs100000.getArrivals();
         double sum = 0;
         int j = 1;
@@ -19,6 +20,18 @@ class TrafficGeneratorTest {
             j++;
         }
         double mean = sum / arrivals.length;
-        assertTrue(mean > obs100000.getAvgArrivalTime() - 0.25 && mean < obs100000.getAvgArrivalTime() + 0.25);
+        assertTrue(mean > avgArrivalTime - 0.25 && mean < avgArrivalTime + 0.25);
+    }
+
+    @Test
+    void generateConnections() {
+        double avgServiceTime = 3;
+        TrafficGenerator obs100000 = new TrafficGenerator(100000, 5, avgServiceTime);
+        double[] connections = obs100000.getConnectionLengths();
+        double sum = 0;
+        for(double i : connections)
+            sum += i;
+        double mean = sum / connections.length;
+        assertTrue(mean > avgServiceTime - 0.25 && mean < avgServiceTime + 0.25);
     }
 }
