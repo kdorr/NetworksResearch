@@ -9,7 +9,7 @@ import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 public class TrafficGenerator {
     private double[] arrivals;
     private double[] connectionLengths;
-    private double[] sourcesAndDestinations; //2 arrays or one?
+    private double[][] sourcesAndDestinations; //2 arrays or one?
 
     public TrafficGenerator() {
         arrivals = new double[0];
@@ -18,16 +18,25 @@ public class TrafficGenerator {
     public TrafficGenerator(int observations) {
         this.arrivals = generateArrivals(observations, 5);
         this.connectionLengths = generateConnectionLengths(observations, 1);
+        this.sourcesAndDestinations = generateSourceAndDestinationNode(observations, 50);
     }
 
     public TrafficGenerator(int observations, double avgArrivalTime) {
         this.arrivals = generateArrivals(observations, avgArrivalTime);
         this.connectionLengths = generateConnectionLengths(observations, 1);
+        this.sourcesAndDestinations = generateSourceAndDestinationNode(observations, 50);
     }
 
     public TrafficGenerator(int observations, double avgArrivalTime, double avgServiceTime) {
-        arrivals = generateArrivals(observations, avgArrivalTime);
-        connectionLengths = generateConnectionLengths(observations, avgServiceTime);
+        this.arrivals = generateArrivals(observations, avgArrivalTime);
+        this.connectionLengths = generateConnectionLengths(observations, avgServiceTime);
+        this.sourcesAndDestinations = generateSourceAndDestinationNode(observations, 50);
+    }
+
+    public TrafficGenerator(int observations, double avgArrivalTime, double avgServiceTime, int numNodes){
+        this.arrivals = generateArrivals(observations, avgArrivalTime);
+        this.connectionLengths = generateConnectionLengths(observations, avgServiceTime);
+        this.sourcesAndDestinations = generateSourceAndDestinationNode(observations, numNodes);
     }
 
     /**
@@ -35,12 +44,12 @@ public class TrafficGenerator {
      */
     public double[] getArrivals() { return arrivals; }
     public double[] getConnectionLengths() { return connectionLengths; }
-    public double[] getSourcesAndDestinations() {
+    public double[][] getSourcesAndDestinations() {
         return sourcesAndDestinations;
     }
     public void setArrivals(double[] arrivals) { this.arrivals = arrivals; }
     public void setConnectionLengths(double[] connectionLengths) { this.connectionLengths = connectionLengths; }
-    public void setSourcesAndDestinations(double[] sourcesAndDestinations) {
+    public void setSourcesAndDestinations(double[][] sourcesAndDestinations) {
         this.sourcesAndDestinations = sourcesAndDestinations;
     }
 
@@ -96,9 +105,27 @@ public class TrafficGenerator {
      * @param numNodes
      * @return
      */
-    private double[] generateSourceAndDestinationNode(int obs, int numNodes) {
+    private double[][] generateSourceAndDestinationNode(int obs, int numNodes) {
         UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes-1);
-        double[] srcAndDest = new double[obs];
+        double[][] srcAndDest = new double[obs][];
+        for(int i=0; i<srcAndDest.length; i++) {
+            srcAndDest[i] = new double[2];
+            do {
+                srcAndDest[i][0] = uni.sample(); //source
+                srcAndDest[i][1] = uni.sample(); //destination
+            } while(srcAndDest[i][0]==srcAndDest[i][1]);
+            //srcAndDest[i] = generateUniqueSrcAndDest(numNodes);
+        }
         return srcAndDest;
+    }
+
+    private double[] generateUniqueSrcAndDest(int numNodes){
+        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes-1);
+        double[] sd = new double[2];
+        do {
+            sd[0] = uni.sample(); // source
+            sd[1] = uni.sample(); // destination
+        } while(sd[0] == sd[1]);
+        return sd;
     }
 }

@@ -34,4 +34,13 @@ class TrafficGeneratorTest {
         double mean = sum / connections.length;
         assertTrue(mean > avgServiceTime - 0.25 && mean < avgServiceTime + 0.25);
     }
+
+    @Test
+    void generateSrcAndDest() {
+        TrafficGenerator obs10 = new TrafficGenerator(10, 5, 1, 5);
+        double[][] sd = obs10.getSourcesAndDestinations();
+        for(int i=0; i<sd.length; i++){
+            assertTrue(sd[i][0] != sd[i][1]);
+        }
+    }
 }
