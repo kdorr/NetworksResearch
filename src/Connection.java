@@ -1,3 +1,5 @@
+import org.apache.commons.math3.distribution.UniformIntegerDistribution;
+
 public class Connection {
     private boolean isEnd;
     private int connectionNum;
@@ -7,6 +9,18 @@ public class Connection {
     private int bandwidth;
 
     public Connection(){
+    }
+
+    public void calcTime(double prevTime, double interarrival){
+        this.setTime(prevTime + interarrival);
+    }
+
+    public void pickSrcAndDest(int[] nodeList){
+        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, nodeList.length-1);
+        this.setSrcNode(nodeList[uni.sample()]);
+        do {
+            this.setDestNode(nodeList[uni.sample()]);
+        } while(this.getDestNode() == this.getSrcNode());
     }
 
     public boolean getIsEnd() {
@@ -55,6 +69,18 @@ public class Connection {
 
     public void setBandwidth(int bandwidth) {
         this.bandwidth = bandwidth;
+    }
+
+    public String toString(){
+        String startOrEnd = "";
+        if(isEnd)
+            startOrEnd = "End";
+        else
+            startOrEnd = "Start";
+        return /*"isEnd: " + this.isEnd*/ startOrEnd + " " + this.connectionNum
+                + "\nTime: " + this.time
+                + "\nsrcNode, destNode: (" + this.srcNode + ", " + this.destNode + ")";
+                //")\nbandwidth: " + this.bandwidth;
     }
 
 }
