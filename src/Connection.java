@@ -1,5 +1,9 @@
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 
+/**
+ * Created by Kimberly Orr.
+ * Class to organize and initialize information associated with each connection.
+ */
 public class Connection {
     private boolean isEnd;
     private int connectionNum;
@@ -8,13 +12,26 @@ public class Connection {
     private int destNode;
     private int bandwidth;
 
+    // Constructor
+
     public Connection(){
     }
 
+    // Class Methods
+
+    /**
+     * Calculate the time of this Connection based on a previous time and specified interarrival time.
+     * @param prevTime The previous connection's time
+     * @param interarrival The interarrival time to use (based on Exponential Distribution defined in TrafficGenerator)
+     */
     public void calcTime(double prevTime, double interarrival){
         this.setTime(prevTime + interarrival);
     }
 
+    /**
+     * Pick the Source and Destination nodes for this Connection.
+     * @param nodeList The list of nodes to choose from.
+     */
     public void pickSrcAndDest(int[] nodeList){
         UniformIntegerDistribution uni = new UniformIntegerDistribution(0, nodeList.length-1);
         this.setSrcNode(nodeList[uni.sample()]);
@@ -22,6 +39,8 @@ public class Connection {
             this.setDestNode(nodeList[uni.sample()]);
         } while(this.getDestNode() == this.getSrcNode());
     }
+
+    // Getters and setters
 
     public boolean getIsEnd() {
         return isEnd;
@@ -71,13 +90,17 @@ public class Connection {
         this.bandwidth = bandwidth;
     }
 
+    /**
+     * The toString for a Connection.
+     * @return information about this Connection
+     */
     public String toString(){
         String startOrEnd = "";
         if(isEnd)
             startOrEnd = "End";
         else
             startOrEnd = "Start";
-        return /*"isEnd: " + this.isEnd*/ startOrEnd + " " + this.connectionNum
+        return startOrEnd + " " + this.connectionNum
                 + "\nTime: " + this.time
                 + "\nsrcNode, destNode: (" + this.srcNode + ", " + this.destNode + ")";
                 //")\nbandwidth: " + this.bandwidth;
