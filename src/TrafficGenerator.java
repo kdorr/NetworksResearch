@@ -18,13 +18,16 @@ public class TrafficGenerator {
         this.avgArrivalTime = 2; // arbitrary default
         this.minBandwidth = 1; // arbitrary default
         this.maxBandwidth = 16; // arbitrary default
-        this.avgServiceTime =  10; // arbitrary default
+        this.avgServiceTime = 5; // arbitrary default
     }
 
     //TODO: add constructor that handles parameters (read in from a file in NetworksResearch.java
-//    public TrafficGenerator( /* params from param file */ ){
-//        //setupParams
-//    }
+    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int minBandwidth, int maxbandwidth){
+        this.avgArrivalTime = avgArrivalTime;
+        this.avgServiceTime = avgServiceTime;
+        this.minBandwidth = minBandwidth;
+        this.maxBandwidth = maxbandwidth;
+    }
 
     /**
      * Create and setup a new Start Connection.
@@ -38,7 +41,6 @@ public class TrafficGenerator {
 
         start.setIsEnd(false);
 
-        //start.setup(prevTime, exp.sample(), nodeList, bw.sample()); // sets time, srcNode, destNode, bandwidth
         start.setConnectionNum(num);
 
         ExponentialDistribution exp = new ExponentialDistribution(this.avgArrivalTime);
