@@ -47,9 +47,8 @@ class TrafficGeneratorTest {
 
         //check that the actual average interarrival time is approximately equal to avgArrivalTime
         assertEquals(mean, 2, .05);
+        //check the variance (for exponential distribution, variance = mean^2)
         assertEquals(variance, 2*2, .05);
-        //check that the nth arrival is approximately Gamma(n, lambda) (IN FOR LOOP)
-        //check that it follows a poisson process: s = E[N(s)]/lambda
     }
 
     @Test
@@ -70,6 +69,7 @@ class TrafficGeneratorTest {
             Connection start = gen.newConnectionStart(i, prevTime, nodeList);
             prevTime = start.getTime();
             Connection end = gen.newConnectionEnd(start);
+            //calculate service time
             double serviceTime = end.getTime() - start.getTime();
             serviceTimes[i] = serviceTime;
             sumServiceTimes += serviceTime;
@@ -81,17 +81,9 @@ class TrafficGeneratorTest {
         }
         varianceServTimes = varianceServTimes / (numConnections - 1);
 
+        //check that the actual average service time is approximately equal to avgServiceTime
         assertEquals(avgServiceTime, 3, .05);
+        //check the variance (for exponential distribution, variance = mean^2)
         assertEquals(varianceServTimes, 3*3, .05);
     }
-
-//
-//    @Test
-//    void generateSrcAndDest() {
-//        TrafficGenerator obs10 = new TrafficGenerator(10, 5, 1, 5);
-//        double[][] sd = obs10.getSourcesAndDestinations();
-//        for(int i=0; i<sd.length; i++){
-//            assertTrue(sd[i][0] != sd[i][1]);
-//        }
-//    }
 }
