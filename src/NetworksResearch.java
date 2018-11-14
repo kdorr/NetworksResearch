@@ -19,9 +19,9 @@ public class NetworksResearch {
 
         //Initialize eventQueue with first connection
         double prevTime = 0;
-        int num = 1;
+        int idNum = 1;
         int numConnectionsToMake = 100;
-        Connection start = gen.newConnectionStart(num, prevTime, nodeList);  //TODO: maybe initialize at beginning of main
+        Connection start = gen.newConnectionStart(idNum, prevTime, nodeList);  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
         eventQueue.add(start);
         eventQueue.add(end);
@@ -37,8 +37,8 @@ public class NetworksResearch {
                 //Create new connections
                 if(numConnectionsToMake > 0) {
                     prevTime = start.getTime();
-                    num++;
-                    start = gen.newConnectionStart(num, prevTime, nodeList);
+                    idNum++;
+                    start = gen.newConnectionStart(idNum, prevTime, nodeList);
                     end = gen.newConnectionEnd(start);
                     insertInOrder(eventQueue, start);
                     insertInOrder(eventQueue, end);
