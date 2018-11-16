@@ -14,9 +14,10 @@ public class Edge {
 
     public String toString(){
         String str = "";
-        for(int i=0; i<slots.length; i++){
-            str += i + ": " + slots[i] + "\n";
-        }
+//        for(int i=0; i<slots.length; i++){
+//            str += i + ": " + slots[i] + "\n";
+//        }
+        str += distance;
         return str;
     }
 
