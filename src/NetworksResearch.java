@@ -14,7 +14,7 @@ public class NetworksResearch {
         System.out.println(ntwk.toString());
 
         //Read in Parameters and create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(/* params */);
+        TrafficGenerator gen = new TrafficGenerator(2, 5, ntwk.getBandwidth()); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();

@@ -8,25 +8,22 @@ import org.apache.commons.math3.distribution.UniformIntegerDistribution;
  */
 public class TrafficGenerator {
     private double avgArrivalTime;
-    private int minBandwidth;
-    private int maxBandwidth;
     private double avgServiceTime;
+    private int bandwidth;
 
     // Constructors
 
     public TrafficGenerator(){
         this.avgArrivalTime = 2; // arbitrary default
-        this.minBandwidth = 1; // arbitrary default
-        this.maxBandwidth = 16; // arbitrary default
         this.avgServiceTime = 5; // arbitrary default
+        this.bandwidth = 16; // arbitrary default
     }
 
     //TODO: add constructor that handles parameters (read in from a file in NetworksResearch.java
-    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int minBandwidth, int maxbandwidth){
+    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int bandwidth){
         this.avgArrivalTime = avgArrivalTime;
         this.avgServiceTime = avgServiceTime;
-        this.minBandwidth = minBandwidth;
-        this.maxBandwidth = maxbandwidth;
+        this.bandwidth = bandwidth;
     }
 
     /**
@@ -48,7 +45,7 @@ public class TrafficGenerator {
 
         start.pickSrcAndDest(numNodes);
 
-        UniformIntegerDistribution bw = new UniformIntegerDistribution(this.minBandwidth, this.maxBandwidth);
+        UniformIntegerDistribution bw = new UniformIntegerDistribution(1, this.bandwidth);
         start.setBandwidth(bw.sample());
 
         return start;
