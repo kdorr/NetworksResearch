@@ -2,6 +2,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Created by Kimberly Orr November 2018.
+ * Class to read in and store the physical topology of the network.
+ */
 public class PhysicalNetwork {
     private String path;
     private int numNodes;
@@ -9,6 +13,10 @@ public class PhysicalNetwork {
     private int numConnections;
     private Edge[][] network;
 
+    /**
+     * Constructor.
+     * @param filepath The path of the file with physical network data.
+     */
     public PhysicalNetwork(String filepath) {
         path = filepath;
         numNodes = 0;
@@ -22,6 +30,10 @@ public class PhysicalNetwork {
         }
     }
 
+    /**
+     * Reads file to create 2D array of Edges and read and store metadata.
+     * @throws IOException
+     */
     public void createNetwork() throws IOException {
         //get number of nodes, set bandwidth
         Scanner s = null;
@@ -44,11 +56,7 @@ public class PhysicalNetwork {
         }
 
         /**
-         * Parse ntwk (2 steps: 1st line gives metadata, the rest are connections)
-         */
-
-        /**
-         * 1st Line:
+         * Parse 1st Line (metadata):
          * [0] = numNodes, [1] = numConnections, [2] = bandwidth
          */
         numNodes = Integer.parseInt(ntwk.get(0)[0]); //TODO possible NumberFormatException
@@ -56,7 +64,7 @@ public class PhysicalNetwork {
         bandwidth = Integer.parseInt(ntwk.get(0)[2]);
 
         /**
-         * Rest of lines:
+         * Parse Rest of Lines (edges in the network):
          * [0] = src, [1] = dest, [2] = numFibers, [3] = distance
          */
         network = new Edge[numNodes][numNodes];
@@ -65,10 +73,13 @@ public class PhysicalNetwork {
             int dest = Integer.parseInt(ntwk.get(i)[1]);
             int numFibers = Integer.parseInt(ntwk.get(i)[2]);
             int distance = Integer.parseInt(ntwk.get(i)[3]);
+
             network[src][dest] = new Edge(bandwidth, distance, src, dest);
-            network[dest][src] = new Edge(bandwidth, distance, dest, src);
+            network[dest][src] = new Edge(bandwidth, distance, dest, src);  //bi-directional
         }
     }
+
+    //toString
 
     public String toString(){
         String str = "path: " + path
@@ -77,7 +88,7 @@ public class PhysicalNetwork {
                 + " numConnections: " + numConnections + "\n";
         for(int i=0; i<network.length; i++){
             for(int j=0; j<network.length; j++){
-                str += network[i][j] + " | ";
+                str += network[i][j].getDistance() + " | ";
             }
             str += "\n";
         }
@@ -85,6 +96,7 @@ public class PhysicalNetwork {
     }
 
     //Getters and setters
+
     public String getPath() {
         return path;
     }
