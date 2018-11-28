@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -10,15 +9,9 @@ public class NetworksResearch {
 
     public static void main(String[] args) {
         //Read in Network
-        int[] nodeList = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};//Temporary test list
 //        PhysicalNetwork reader = new PhysicalNetwork("pt_usnet24");
-        PhysicalNetwork reader = new PhysicalNetwork("pt6");
-        try {
-            reader.createNetwork();
-        } catch (IOException e) {
-            System.err.println("IO Execption Caught");
-        }
-        System.out.println(reader.toString());
+        PhysicalNetwork ntwk = new PhysicalNetwork("pt6");
+        System.out.println(ntwk.toString());
 
         //Read in Parameters and create TrafficGenerator
         TrafficGenerator gen = new TrafficGenerator(/* params */);
@@ -30,7 +23,7 @@ public class NetworksResearch {
         double prevTime = 0;
         int idNum = 1;
         int numConnectionsToMake = 100;
-        Connection start = gen.newConnectionStart(idNum, prevTime, nodeList);  //TODO: maybe initialize at beginning of main
+        Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
         eventQueue.add(start);
         eventQueue.add(end);
@@ -47,7 +40,7 @@ public class NetworksResearch {
                 if(numConnectionsToMake > 0) {
                     prevTime = start.getTime();
                     idNum++;
-                    start = gen.newConnectionStart(idNum, prevTime, nodeList);
+                    start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());
                     end = gen.newConnectionEnd(start);
                     insertInOrder(eventQueue, start);
                     insertInOrder(eventQueue, end);
@@ -85,7 +78,4 @@ public class NetworksResearch {
         }
     }
 
-    public static void readInNetwork(){
-
-    }
 }

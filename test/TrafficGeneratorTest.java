@@ -21,7 +21,7 @@ class TrafficGeneratorTest {
         int[] nodeList = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         double prevTime=0;
         for(int i=0; i<startConnects.length; i++){
-            startConnects[i] = gen.newConnectionStart(i, prevTime, nodeList);
+            startConnects[i] = gen.newConnectionStart(i, prevTime, 10);
             prevTime = startConnects[i].getTime();
 
             arrivals[i] = prevTime;  // add arrival time to list of arrivals
@@ -66,7 +66,7 @@ class TrafficGeneratorTest {
         double prevTime=0;
         for(int i=0; i<serviceTimes.length; i++){
             //Generate connections
-            Connection start = gen.newConnectionStart(i, prevTime, nodeList);
+            Connection start = gen.newConnectionStart(i, prevTime, 10);
             prevTime = start.getTime();
             Connection end = gen.newConnectionEnd(start);
             //calculate service time

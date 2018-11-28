@@ -30,18 +30,14 @@ public class Connection {
 
     /**
      * Pick the Source and Destination nodes for this Connection.
-     * @param nodeList The list of nodes to choose from.
+     * @param numNodes The number of nodes in the physical network.
      */
-    public void pickSrcAndDest(int[] nodeList){
-        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, nodeList.length-1);
-        this.setSrcNode(nodeList[uni.sample()]);
-        do {
-            this.setDestNode(nodeList[uni.sample()]);
-        } while(this.getDestNode() == this.getSrcNode());
-    }
-
     public void pickSrcAndDest(int numNodes){
-        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes);
+        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes-1);
+        this.setSrcNode(uni.sample());
+        do {
+            this.setDestNode(uni.sample());
+        } while(this.getDestNode() == this.getSrcNode());
     }
 
     // Getters and setters

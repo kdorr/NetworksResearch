@@ -33,10 +33,10 @@ public class TrafficGenerator {
      * Create and setup a new Start Connection.
      * @param num This Connection's number (serves as an ID).
      * @param prevTime The time from the previous Connection.
-     * @param nodeList The list of nodes to choose from for source and destination nodes.
+     * @param numNodes The number of nodes in the physical network.
      * @return Connection
      */
-    public Connection newConnectionStart(int num, double prevTime, int[] nodeList){
+    public Connection newConnectionStart(int num, double prevTime, int numNodes){
         Connection start = new Connection();
 
         start.setIsEnd(false);
@@ -46,7 +46,7 @@ public class TrafficGenerator {
         ExponentialDistribution exp = new ExponentialDistribution(this.avgArrivalTime);
         start.calcTime(prevTime, exp.sample());
 
-        start.pickSrcAndDest(nodeList);
+        start.pickSrcAndDest(numNodes);
 
         UniformIntegerDistribution bw = new UniformIntegerDistribution(this.minBandwidth, this.maxBandwidth);
         start.setBandwidth(bw.sample());

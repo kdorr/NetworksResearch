@@ -15,6 +15,11 @@ public class PhysicalNetwork {
         bandwidth = 0;
         numConnections = 0;
         network = new Edge[0][0];
+        try {
+            createNetwork();
+        } catch (IOException e){
+            System.err.println("IO Execption from reading the network caught");
+        }
     }
 
     public void createNetwork() throws IOException {
