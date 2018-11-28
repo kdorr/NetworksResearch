@@ -40,6 +40,10 @@ public class Connection {
         } while(this.getDestNode() == this.getSrcNode());
     }
 
+    public void pickSrcAndDest(int numNodes){
+        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes);
+    }
+
     // Getters and setters
 
     public boolean getIsEnd() {

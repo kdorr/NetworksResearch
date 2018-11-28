@@ -1,5 +1,3 @@
-import org.apache.commons.math3.ml.neuralnet.Network;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -13,20 +11,15 @@ public class NetworksResearch {
     public static void main(String[] args) {
         //Read in Network
         int[] nodeList = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};//Temporary test list
-        Edge[][] physicalNetwork = new Edge[0][0];
-//        NetworkReader reader = new NetworkReader("pt_usnet24");
-        NetworkReader reader = new NetworkReader("pt6");
+//        PhysicalNetwork reader = new PhysicalNetwork("pt_usnet24");
+        PhysicalNetwork reader = new PhysicalNetwork("pt6");
         try {
-            physicalNetwork = reader.createNetwork();
+            reader.createNetwork();
         } catch (IOException e) {
             System.err.println("IO Execption Caught");
         }
-        for(int i=0; i<physicalNetwork.length; i++){
-            for(int j=0; j<physicalNetwork.length; j++){
-                System.out.print(physicalNetwork[i][j] + " | ");
-            }
-            System.out.println();
-        }
+        System.out.println(reader.toString());
+
         //Read in Parameters and create TrafficGenerator
         TrafficGenerator gen = new TrafficGenerator(/* params */);
 
