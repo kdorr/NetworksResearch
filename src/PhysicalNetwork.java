@@ -74,8 +74,8 @@ public class PhysicalNetwork {
             int numFibers = Integer.parseInt(ntwk.get(i)[2]);
             int distance = Integer.parseInt(ntwk.get(i)[3]);
 
-            network[src][dest] = new Edge(bandwidth, distance, src, dest);
-            network[dest][src] = new Edge(bandwidth, distance, dest, src);  //bi-directional
+            network[src][dest] = new Edge(bandwidth, numFibers, distance, src, dest);
+            network[dest][src] = new Edge(bandwidth, numFibers, distance, dest, src);  //bi-directional
         }
     }
 

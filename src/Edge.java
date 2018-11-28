@@ -1,12 +1,14 @@
 public class Edge {
     private int[] slots;
+    private int numFibers;
     private int distance;
     private int srcNode;
     private int destNode;
     //list of adjacent nodes?
 
-    public Edge(int numSlots, int dist, int src, int dest) {
+    public Edge(int numSlots, int fibers, int dist, int src, int dest) {
         slots = new int[numSlots];
+        numFibers = fibers;
         distance = dist;
         srcNode = src;
         destNode = dest;
@@ -30,6 +32,14 @@ public class Edge {
 
     public void setSlots(int[] slots) {
         this.slots = slots;
+    }
+
+    public int getNumFibers() {
+        return numFibers;
+    }
+
+    public void setNumFibers(int numFibers) {
+        this.numFibers = numFibers;
     }
 
     public int getDistance() {
