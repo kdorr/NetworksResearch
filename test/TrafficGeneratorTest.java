@@ -17,11 +17,11 @@ class TrafficGeneratorTest {
         /**
          *  Create Connections and add their times to arrivals.
          */
-        TrafficGenerator gen = new TrafficGenerator(2, 3, 1, 16);
+        TrafficGenerator gen = new TrafficGenerator(2, 3, 16);
         int[] nodeList = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         double prevTime=0;
         for(int i=0; i<startConnects.length; i++){
-            startConnects[i] = gen.newConnectionStart(i, prevTime, nodeList);
+            startConnects[i] = gen.newConnectionStart(i, prevTime, 10);
             prevTime = startConnects[i].getTime();
 
             arrivals[i] = prevTime;  // add arrival time to list of arrivals
@@ -56,7 +56,7 @@ class TrafficGeneratorTest {
      * Test to check that the service times have the same average as requested.
      */
     void serviceTimes(){
-        TrafficGenerator gen = new TrafficGenerator(2, 3, 1, 16);
+        TrafficGenerator gen = new TrafficGenerator(2, 3, 16);
         int numConnections = 100000;
         int[] nodeList = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         double[] serviceTimes = new double[numConnections];
@@ -66,7 +66,7 @@ class TrafficGeneratorTest {
         double prevTime=0;
         for(int i=0; i<serviceTimes.length; i++){
             //Generate connections
-            Connection start = gen.newConnectionStart(i, prevTime, nodeList);
+            Connection start = gen.newConnectionStart(i, prevTime, 10);
             prevTime = start.getTime();
             Connection end = gen.newConnectionEnd(start);
             //calculate service time

@@ -11,6 +11,7 @@ public class Connection {
     private int srcNode;
     private int destNode;
     private int bandwidth;
+    private int[] slotsUsed;
 
     // Constructor
 
@@ -30,13 +31,13 @@ public class Connection {
 
     /**
      * Pick the Source and Destination nodes for this Connection.
-     * @param nodeList The list of nodes to choose from.
+     * @param numNodes The number of nodes in the physical network.
      */
-    public void pickSrcAndDest(int[] nodeList){
-        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, nodeList.length-1);
-        this.setSrcNode(nodeList[uni.sample()]);
+    public void pickSrcAndDest(int numNodes){
+        UniformIntegerDistribution uni = new UniformIntegerDistribution(0, numNodes-1);
+        this.setSrcNode(uni.sample());
         do {
-            this.setDestNode(nodeList[uni.sample()]);
+            this.setDestNode(uni.sample());
         } while(this.getDestNode() == this.getSrcNode());
     }
 
@@ -88,6 +89,14 @@ public class Connection {
 
     public void setBandwidth(int bandwidth) {
         this.bandwidth = bandwidth;
+    }
+
+    public int[] getSlotsUsed() {
+        return slotsUsed;
+    }
+
+    public void setSlotsUsed(int[] slotsUsed) {
+        this.slotsUsed = slotsUsed;
     }
 
     /**

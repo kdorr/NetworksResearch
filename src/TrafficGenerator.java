@@ -4,39 +4,36 @@ import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 /**
  * Created by Kimberly Orr on 8/29/18.
  * Class to generate traffic for the network including arrival times,
- * connection length, source and destination nodes, and bandwidth.
+ * connection length, source and destination nodes, and maxConnectionBandwidth.
  */
 public class TrafficGenerator {
     private double avgArrivalTime;
-    private int minBandwidth;
-    private int maxBandwidth;
     private double avgServiceTime;
+    private int maxConnectionBandwidth;
 
     // Constructors
 
     public TrafficGenerator(){
         this.avgArrivalTime = 2; // arbitrary default
-        this.minBandwidth = 1; // arbitrary default
-        this.maxBandwidth = 16; // arbitrary default
         this.avgServiceTime = 5; // arbitrary default
+        this.maxConnectionBandwidth = 16; // arbitrary default
     }
 
     //TODO: add constructor that handles parameters (read in from a file in NetworksResearch.java
-    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int minBandwidth, int maxbandwidth){
+    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int maxConnectionBandwidth){
         this.avgArrivalTime = avgArrivalTime;
         this.avgServiceTime = avgServiceTime;
-        this.minBandwidth = minBandwidth;
-        this.maxBandwidth = maxbandwidth;
+        this.maxConnectionBandwidth = maxConnectionBandwidth;
     }
 
     /**
      * Create and setup a new Start Connection.
      * @param num This Connection's number (serves as an ID).
      * @param prevTime The time from the previous Connection.
-     * @param nodeList The list of nodes to choose from for source and destination nodes.
+     * @param numNodes The number of nodes in the physical network.
      * @return Connection
      */
-    public Connection newConnectionStart(int num, double prevTime, int[] nodeList){
+    public Connection newConnectionStart(int num, double prevTime, int numNodes){
         Connection start = new Connection();
 
         start.setIsEnd(false);
@@ -46,9 +43,9 @@ public class TrafficGenerator {
         ExponentialDistribution exp = new ExponentialDistribution(this.avgArrivalTime);
         start.calcTime(prevTime, exp.sample());
 
-        start.pickSrcAndDest(nodeList);
+        start.pickSrcAndDest(numNodes);
 
-        UniformIntegerDistribution bw = new UniformIntegerDistribution(this.minBandwidth, this.maxBandwidth);
+        UniformIntegerDistribution bw = new UniformIntegerDistribution(1, this.maxConnectionBandwidth);
         start.setBandwidth(bw.sample());
 
         return start;

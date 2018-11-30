@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -9,19 +10,24 @@ public class NetworksResearch {
 
     public static void main(String[] args) {
         //Read in Network
-        int[] nodeList = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; //Temporary test list
+        PhysicalNetwork ntwk = new PhysicalNetwork("pt6");
+        try {
+            ntwk.createNetwork();
+        } catch (IOException e){
+            System.err.println("IO Execption from reading the network caught");
+        }
 
         //Read in Parameters and create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(/* params */);
+        TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();
 
         //Initialize eventQueue with first connection
         double prevTime = 0;
-        int num = 1;
-        int numConnectionsToMake = 100;
-        Connection start = gen.newConnectionStart(num, prevTime, nodeList);  //TODO: maybe initialize at beginning of main
+        int idNum = 1;
+        int numConnectionsToMake = 100; //TODO: make this a parameter to be read in
+        Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
         eventQueue.add(start);
         eventQueue.add(end);
@@ -30,15 +36,15 @@ public class NetworksResearch {
         while(numConnectionsToMake > 0 || eventQueue.peek()!=null){
             Connection currentConnection = eventQueue.removeFirst();
 
-            System.out.println(currentConnection.toString() + "\n");
+            //System.out.println(currentConnection.toString() + "\n");
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 //TODO: process start: route connection, update resources used
 
                 //Create new connections
                 if(numConnectionsToMake > 0) {
                     prevTime = start.getTime();
-                    num++;
-                    start = gen.newConnectionStart(num, prevTime, nodeList);
+                    idNum++;
+                    start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());
                     end = gen.newConnectionEnd(start);
                     insertInOrder(eventQueue, start);
                     insertInOrder(eventQueue, end);
@@ -75,4 +81,5 @@ public class NetworksResearch {
             }
         }
     }
+
 }
