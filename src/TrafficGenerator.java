@@ -4,26 +4,26 @@ import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 /**
  * Created by Kimberly Orr on 8/29/18.
  * Class to generate traffic for the network including arrival times,
- * connection length, source and destination nodes, and bandwidth.
+ * connection length, source and destination nodes, and maxConnectionBandwidth.
  */
 public class TrafficGenerator {
     private double avgArrivalTime;
     private double avgServiceTime;
-    private int bandwidth;
+    private int maxConnectionBandwidth;
 
     // Constructors
 
     public TrafficGenerator(){
         this.avgArrivalTime = 2; // arbitrary default
         this.avgServiceTime = 5; // arbitrary default
-        this.bandwidth = 16; // arbitrary default
+        this.maxConnectionBandwidth = 16; // arbitrary default
     }
 
     //TODO: add constructor that handles parameters (read in from a file in NetworksResearch.java
-    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int bandwidth){
+    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int maxConnectionBandwidth){
         this.avgArrivalTime = avgArrivalTime;
         this.avgServiceTime = avgServiceTime;
-        this.bandwidth = bandwidth;
+        this.maxConnectionBandwidth = maxConnectionBandwidth;
     }
 
     /**
@@ -45,7 +45,7 @@ public class TrafficGenerator {
 
         start.pickSrcAndDest(numNodes);
 
-        UniformIntegerDistribution bw = new UniformIntegerDistribution(1, this.bandwidth);
+        UniformIntegerDistribution bw = new UniformIntegerDistribution(1, this.maxConnectionBandwidth);
         start.setBandwidth(bw.sample());
 
         return start;

@@ -18,7 +18,7 @@ public class NetworksResearch {
         }
 
         //Read in Parameters and create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(2, 5, ntwk.getNumSlots()); //arbitrary arrival and service times
+        TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();
@@ -26,7 +26,7 @@ public class NetworksResearch {
         //Initialize eventQueue with first connection
         double prevTime = 0;
         int idNum = 1;
-        int numConnectionsToMake = 100;
+        int numConnectionsToMake = 100; //TODO: make this a parameter to be read in
         Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
         eventQueue.add(start);

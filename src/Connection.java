@@ -11,7 +11,6 @@ public class Connection {
     private int srcNode;
     private int destNode;
     private int bandwidth;
-
     private int[] slotsUsed;
 
     // Constructor
