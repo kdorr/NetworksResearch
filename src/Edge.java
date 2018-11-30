@@ -1,5 +1,5 @@
 public class Edge {
-    private int[] slots;
+    private boolean[] slots;
     private int numFibers;
     private int distance;
     private int srcNode;
@@ -7,7 +7,7 @@ public class Edge {
     //list of adjacent nodes?
 
     public Edge(int numSlots, int fibers, int dist, int src, int dest) {
-        slots = new int[numSlots];
+        slots = new boolean[numSlots];
         numFibers = fibers;
         distance = dist;
         srcNode = src;
@@ -26,11 +26,11 @@ public class Edge {
     /**
      *  Getters and Setters
      */
-    public int[] getSlots() {
+    public boolean[] getSlots() {
         return slots;
     }
 
-    public void setSlots(int[] slots) {
+    public void setSlots(boolean[] slots) {
         this.slots = slots;
     }
 

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -9,12 +10,15 @@ public class NetworksResearch {
 
     public static void main(String[] args) {
         //Read in Network
-//        PhysicalNetwork reader = new PhysicalNetwork("pt_usnet24");
         PhysicalNetwork ntwk = new PhysicalNetwork("pt6");
-        System.out.println(ntwk.toString());
+        try {
+            ntwk.createNetwork();
+        } catch (IOException e){
+            System.err.println("IO Execption from reading the network caught");
+        }
 
         //Read in Parameters and create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(2, 5, ntwk.getBandwidth()); //arbitrary arrival and service times
+        TrafficGenerator gen = new TrafficGenerator(2, 5, ntwk.getNumSlots()); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();

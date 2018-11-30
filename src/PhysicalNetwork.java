@@ -7,27 +7,22 @@ import java.util.Scanner;
  * Class to read in and store the physical topology of the network.
  */
 public class PhysicalNetwork {
-    private String path;
+    private String filepath;
     private int numNodes;
-    private int bandwidth;
+    private int numSlots;
     private int numConnections;
     private Edge[][] network;
 
     /**
      * Constructor.
-     * @param filepath The path of the file with physical network data.
+     * @param filepath The filepath of the file with physical network data.
      */
     public PhysicalNetwork(String filepath) {
-        path = filepath;
+        this.filepath = filepath;
         numNodes = 0;
-        bandwidth = 0;
+        numSlots = 0;
         numConnections = 0;
         network = new Edge[0][0];
-        try {
-            createNetwork();
-        } catch (IOException e){
-            System.err.println("IO Execption from reading the network caught");
-        }
     }
 
     /**
@@ -35,7 +30,7 @@ public class PhysicalNetwork {
      * @throws IOException
      */
     public void createNetwork() throws IOException {
-        //get number of nodes, set bandwidth
+        //get number of nodes, set numSlots
         Scanner s = null;
         ArrayList<String[]> ntwk = new ArrayList<String[]>();
 
@@ -44,7 +39,7 @@ public class PhysicalNetwork {
          *  entries in a String array of the line split by whitespace.
          */
         try {
-            s = new Scanner(new BufferedReader(new FileReader(path)));
+            s = new Scanner(new BufferedReader(new FileReader(filepath)));
             while (s.hasNextLine()) {
                 String line = s.nextLine().trim();
                 ntwk.add(line.split("\\s+")); //"\s+" is regex for multicharacter whitespace
@@ -57,11 +52,11 @@ public class PhysicalNetwork {
 
         /**
          * Parse 1st Line (metadata):
-         * [0] = numNodes, [1] = numConnections, [2] = bandwidth
+         * [0] = numNodes, [1] = numConnections, [2] = numSlots
          */
         numNodes = Integer.parseInt(ntwk.get(0)[0]); //TODO possible NumberFormatException
         numConnections = Integer.parseInt(ntwk.get(0)[1]);
-        bandwidth = Integer.parseInt(ntwk.get(0)[2]);
+        numSlots = Integer.parseInt(ntwk.get(0)[2]);
 
         /**
          * Parse Rest of Lines (edges in the network):
@@ -74,21 +69,21 @@ public class PhysicalNetwork {
             int numFibers = Integer.parseInt(ntwk.get(i)[2]);
             int distance = Integer.parseInt(ntwk.get(i)[3]);
 
-            network[src][dest] = new Edge(bandwidth, numFibers, distance, src, dest);
-            network[dest][src] = new Edge(bandwidth, numFibers, distance, dest, src);  //bi-directional
+            network[src][dest] = new Edge(numSlots, numFibers, distance, src, dest);
+            network[dest][src] = new Edge(numSlots, numFibers, distance, dest, src);  //bi-directional
         }
     }
 
     //toString
 
     public String toString(){
-        String str = "path: " + path
-                + " bandwidth: " + bandwidth
+        String str = "filepath: " + filepath
+                + " numSlots: " + numSlots
                 + "\nnumNodes: " + numNodes
                 + " numConnections: " + numConnections + "\n";
         for(int i=0; i<network.length; i++){
             for(int j=0; j<network.length; j++){
-                str += network[i][j].getDistance() + " | ";
+                str += network[i][j] + " | ";
             }
             str += "\n";
         }
@@ -97,12 +92,12 @@ public class PhysicalNetwork {
 
     //Getters and setters
 
-    public String getPath() {
-        return path;
+    public String getFilepath() {
+        return filepath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
 
     public int getNumNodes() {
@@ -113,12 +108,12 @@ public class PhysicalNetwork {
         this.numNodes = numNodes;
     }
 
-    public int getBandwidth() {
-        return bandwidth;
+    public int getNumSlots() {
+        return numSlots;
     }
 
-    public void setBandwidth(int bandwidth) {
-        this.bandwidth = bandwidth;
+    public void setNumSlots(int numSlots) {
+        this.numSlots = numSlots;
     }
 
     public int getNumConnections() {
