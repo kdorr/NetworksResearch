@@ -1,4 +1,3 @@
-import org.apache.commons.math3.distribution.GammaDistribution;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,9 +45,9 @@ class TrafficGeneratorTest {
         variance = variance/(arrivals.length-1);
 
         //check that the actual average interarrival time is approximately equal to avgArrivalTime
-        assertEquals(mean, 2, .05);
+        assertEquals(mean, 2, .1);
         //check the variance (for exponential distribution, variance = mean^2)
-        assertEquals(variance, 2*2, .05);
+        assertEquals(variance, 2*2, .1);
     }
 
     @Test

@@ -12,6 +12,7 @@ public class Connection {
     private int destNode;
     private int bandwidth;
     private int[] slotsUsed;
+    private int[] path;
 
     // Constructor
 
@@ -97,6 +98,14 @@ public class Connection {
 
     public void setSlotsUsed(int[] slotsUsed) {
         this.slotsUsed = slotsUsed;
+    }
+
+    public int[] getPath() {
+        return path;
+    }
+
+    public void setPath(int[] path) {
+        this.path = path;
     }
 
     /**

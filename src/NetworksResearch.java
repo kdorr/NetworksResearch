@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -16,6 +17,8 @@ public class NetworksResearch {
         } catch (IOException e){
             System.err.println("IO Execption from reading the network caught");
         }
+        // Establish virtual topology
+        ArrayList<Connection> vt = new ArrayList<Connection>();
 
         //Read in Parameters and create TrafficGenerator
         TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
@@ -29,6 +32,15 @@ public class NetworksResearch {
         int numConnectionsToMake = 100; //TODO: make this a parameter to be read in
         Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
+        //TODO: route this connection
+        int[] changeMeSlots = {1};
+        int[] changeMePath = {start.getSrcNode(), start.getDestNode()};
+        start.setSlotsUsed(changeMeSlots);
+        end.setSlotsUsed(changeMeSlots);
+        start.setPath(changeMePath);
+        end.setPath(changeMePath);
+        vt.add(start);
+        //TODO: update resources
         eventQueue.add(start);
         eventQueue.add(end);
         numConnectionsToMake--;
@@ -53,6 +65,7 @@ public class NetworksResearch {
             }
             else{  // Handle end nodes
                 //TODO: process end: release resources/update resources used
+                vt.remove(currentConnection.getConnectionNum()); //doesn't work
             }
         }
     }
