@@ -10,19 +10,30 @@ public class VirtualTopology {
 
     public VirtualTopology(int numNodes){
         vt = new LinkedList[numNodes][numNodes];
+        for(int i=0; i<vt.length; i++){
+            for(int j=0; j<vt[i].length; j++){
+                vt[i][j] = new LinkedList<Connection>();
+            }
+        }
     }
 
-//    public String toString(){
-//        String str = "TODO";
-//        return str;
-//    }
-
-    public LinkedList<Connection>[][] getVt() {
-        return vt;
+    public String toString(){
+        String str = "";
+        for(int i=0; i<vt.length; i++){
+            for(int j=0; j<vt[i].length; j++){
+                str += vt[i][j].size() + ", ";
+            }
+            str += "\n";
+        }
+        return str;
     }
 
-    public void setVt(LinkedList<Connection>[][] vt) {
-        this.vt = vt;
+    public void addConnection(Connection c){
+        vt[c.getSrcNode()][c.getDestNode()].add(c);
+    }
+
+    public void removeConnection(Connection c){
+        vt[c.getSrcNode()][c.getDestNode()].remove(c);
     }
 
     public Connection findConnection(int src, int dest, int id){
@@ -41,6 +52,14 @@ public class VirtualTopology {
             }
         }
         return found;
+    }
+
+    public LinkedList<Connection>[][] getVt() {
+        return vt;
+    }
+
+    public void setVt(LinkedList<Connection>[][] vt) {
+        this.vt = vt;
     }
 
 }

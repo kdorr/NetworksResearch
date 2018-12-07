@@ -18,7 +18,7 @@ public class NetworksResearch {
             System.err.println("IO Execption from reading the network caught");
         }
         // Establish virtual topology
-        ArrayList<Connection> vt = new ArrayList<Connection>();
+        VirtualTopology vt = new VirtualTopology(ntwk.getNumNodes());
 
         //Read in Parameters and create TrafficGenerator
         TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
@@ -29,18 +29,10 @@ public class NetworksResearch {
         //Initialize eventQueue with first connection
         double prevTime = 0;
         int idNum = 1;
-        int numConnectionsToMake = 100; //TODO: make this a parameter to be read in
+        int numConnectionsToMake = 10; //TODO: make this a parameter to be read in
+
         Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
-        //TODO: route this connection
-        int[] changeMeSlots = {1};
-        int[] changeMePath = {start.getSrcNode(), start.getDestNode()};
-        start.setSlotsUsed(changeMeSlots);
-        end.setSlotsUsed(changeMeSlots);
-        start.setPath(changeMePath);
-        end.setPath(changeMePath);
-        vt.add(start);
-        //TODO: update resources
         eventQueue.add(start);
         eventQueue.add(end);
         numConnectionsToMake--;
@@ -48,9 +40,18 @@ public class NetworksResearch {
         while(numConnectionsToMake > 0 || eventQueue.peek()!=null){
             Connection currentConnection = eventQueue.removeFirst();
 
+            System.out.println(currentConnection.getConnectionNum() + ":\n" + vt.toString());
+
             //System.out.println(currentConnection.toString() + "\n");
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 //TODO: process start: route connection, update resources used
+                int[] changeMeSlots = {2};
+                int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()};
+                currentConnection.setSlotsUsed(changeMeSlots);
+                currentConnection.setPath(changeMePath);
+                vt.addConnection(currentConnection);
+
+                System.out.println("Just added " + currentConnection.getConnectionNum());
 
                 //Create new connections
                 if(numConnectionsToMake > 0) {
@@ -65,7 +66,9 @@ public class NetworksResearch {
             }
             else{  // Handle end nodes
                 //TODO: process end: release resources/update resources used
-                vt.remove(currentConnection.getConnectionNum()); //doesn't work
+                System.out.println(currentConnection.getConnectionNum() + ": END");
+                vt.removeConnection(currentConnection.getOther());  //physical tear down happen here???
+                // or here?
             }
         }
     }
