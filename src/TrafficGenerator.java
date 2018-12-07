@@ -72,6 +72,8 @@ public class TrafficGenerator {
 
         end.setBandwidth(start.getBandwidth());
 
+        end.setOther(start);
+
         return end;
     }
 }

@@ -1,5 +1,7 @@
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 
+import java.util.Arrays;
+
 /**
  * Created by Kimberly Orr.
  * Class to organize and initialize information associated with each connection.
@@ -13,6 +15,7 @@ public class Connection {
     private int bandwidth;
     private int[] slotsUsed;
     private int[] path;
+    private Connection other; //TODO: Maybe just make this Connection start???
 
     // Constructor
 
@@ -108,6 +111,14 @@ public class Connection {
         this.path = path;
     }
 
+    public Connection getOther() {
+        return other;
+    }
+
+    public void setOther(Connection other) {
+        this.other = other;
+    }
+
     /**
      * The toString for a Connection.
      * @return information about this Connection
@@ -120,7 +131,8 @@ public class Connection {
             startOrEnd = "Start";
         return startOrEnd + " " + this.connectionNum
                 + "\nTime: " + this.time
-                + "\nsrcNode, destNode: (" + this.srcNode + ", " + this.destNode + ")";
+                + "\nsrcNode, destNode: ("  + Arrays.toString(path); //+ this.srcNode + ", " + this.destNode + ")"
+//                + "\n"; //+ Arrays.toString(slotsUsed);
                 //")\nbandwidth: " + this.bandwidth;
     }
 
