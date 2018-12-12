@@ -25,18 +25,16 @@ public class Edge {
 
     /**
      * Checks to see if the requested slots are available in this edge.
-     * @param start
-     * @param end
+     * @param range
      * @return true if available and false if not
      */
-    public boolean isRangeFree(int start, int end){
+    public boolean isRangeFree(int[] range){
         boolean free = true;
-        if(end >= slots.length || start < 0){
-            System.err.println("Error: Requesting slots that don't exist");
-        }
-        else{
-            for(int i=start; i<=end; i++){
-                if(slots[i] == true){
+        for(int i=0; i<range.length; i++) {
+            if (range[i] >= slots.length || range[i] < 0) {
+                System.err.println("Error: Requesting slots that don't exist");
+            } else {
+                if (slots[range[i]] == true) {
                     free = false;
                 }
             }
@@ -46,29 +44,31 @@ public class Edge {
 
     /**
      * Marks slots along the edge as in use.
-     * @param start
-     * @param end
+     * @param range
      */
-    public void markRangeTaken(int start, int end){
-        if(end >= slots.length){
-            System.err.println("Marking slots that don't exist");
-        }
-        for(int i=start; i<=end; i++){
-            slots[i] = true;
+    public void markRangeTaken(int[] range){
+        for(int i=0; i<=range.length; i++){
+            if(range[i] >= slots.length){
+                System.err.println("Marking slots that don't exist");
+            }
+            else {
+                slots[range[i]] = true;
+            }
         }
     }
 
     /**
      * Marks slots along the edge as free.
-     * @param start
-     * @param end
+     * @param range
      */
-    public void markRangeFree(int start, int end){
-        if(end >= slots.length){
-            System.err.println("Marking slots that don't exist");
-        }
-        for(int i=start; i<=end; i++){
-            slots[i] = false;
+    public void markRangeFree(int[] range){
+        for(int i=0; i<=range.length; i++){
+            if(range[i] >= slots.length){
+                System.err.println("Marking slots that don't exist");
+            }
+            else {
+                slots[range[i]] = true;
+            }
         }
     }
 

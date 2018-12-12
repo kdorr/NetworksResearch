@@ -44,10 +44,13 @@ public class NetworksResearch {
 
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 //TODO: process start: route connection, update resources used
+                //Start stuff done by routing algorithm
                 int[] changeMeSlots = {2};
                 int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()};
-                currentConnection.setSlotsUsed(changeMeSlots);
-                currentConnection.setPath(changeMePath);
+                currentConnection.setSlotsUsed(changeMeSlots); //in connection
+                currentConnection.setPath(changeMePath);  //in connection
+                //End stuff done by routing algorithm
+                currentConnection.claimResources(ntwk);  //physical network
                 vt.addConnection(currentConnection);
 
                 //Create new connections
@@ -64,8 +67,8 @@ public class NetworksResearch {
             else{  // Handle end nodes
                 //TODO: process end: release resources/update resources used
                 System.out.println(currentConnection.getConnectionNum() + ": END");
-                vt.removeConnection(currentConnection.getOther());  //physical tear down happen here???
-                // or here?
+                currentConnection.releaseResources(ntwk);
+                vt.removeConnection(currentConnection.getOther());
             }
         }
     }

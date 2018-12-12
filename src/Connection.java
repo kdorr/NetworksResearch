@@ -45,6 +45,26 @@ public class Connection {
         } while(this.getDestNode() == this.getSrcNode());
     }
 
+    public void releaseResources(PhysicalNetwork ntwk){
+        Edge[][] edges = ntwk.getNetwork();
+        for(int i=1; i < path.length; i++){
+            edges[i-1][i].markRangeFree(slotsUsed);
+            edges[i][i-1].markRangeFree(slotsUsed);
+        }
+    }
+
+    /**
+     * Only to be used after connection is routed!!
+     * @param ntwk
+     */
+    public void claimResources(PhysicalNetwork ntwk){
+        Edge[][] edges = ntwk.getNetwork();
+        for(int i=1; i < path.length; i++){
+            edges[i-1][i].markRangeTaken(slotsUsed);
+            edges[i][i-1].markRangeTaken(slotsUsed);
+        }
+    }
+
     // Getters and setters
 
     public boolean getIsEnd() {
