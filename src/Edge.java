@@ -1,5 +1,5 @@
 public class Edge {
-    private boolean[] slots;
+    private boolean[] slots; // false if empty
     private int numFibers;
     private int distance;
     private int srcNode;
@@ -16,11 +16,60 @@ public class Edge {
 
     public String toString(){
         String str = "";
-//        for(int i=0; i<slots.length; i++){
-//            str += i + ": " + slots[i] + "\n";
-//        }
+        for(int i=0; i<slots.length; i++){
+            str += i + ": " + slots[i] + "\n";
+        }
         str += distance;
         return str;
+    }
+
+    /**
+     * Checks to see if the requested slots are available in this edge.
+     * @param start
+     * @param end
+     * @return true if available and false if not
+     */
+    public boolean isRangeFree(int start, int end){
+        boolean free = true;
+        if(end >= slots.length || start < 0){
+            System.err.println("Error: Requesting slots that don't exist");
+        }
+        else{
+            for(int i=start; i<=end; i++){
+                if(slots[i] == true){
+                    free = false;
+                }
+            }
+        }
+        return free;
+    }
+
+    /**
+     * Marks slots along the edge as in use.
+     * @param start
+     * @param end
+     */
+    public void markRangeTaken(int start, int end){
+        if(end >= slots.length){
+            System.err.println("Marking slots that don't exist");
+        }
+        for(int i=start; i<=end; i++){
+            slots[i] = true;
+        }
+    }
+
+    /**
+     * Marks slots along the edge as free.
+     * @param start
+     * @param end
+     */
+    public void markRangeFree(int start, int end){
+        if(end >= slots.length){
+            System.err.println("Marking slots that don't exist");
+        }
+        for(int i=start; i<=end; i++){
+            slots[i] = false;
+        }
     }
 
     /**

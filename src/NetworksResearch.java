@@ -42,7 +42,6 @@ public class NetworksResearch {
 
             System.out.println(currentConnection.getConnectionNum() + ":\n" + vt.toString());
 
-            //System.out.println(currentConnection.toString() + "\n");
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 //TODO: process start: route connection, update resources used
                 int[] changeMeSlots = {2};
@@ -50,8 +49,6 @@ public class NetworksResearch {
                 currentConnection.setSlotsUsed(changeMeSlots);
                 currentConnection.setPath(changeMePath);
                 vt.addConnection(currentConnection);
-
-                System.out.println("Just added " + currentConnection.getConnectionNum());
 
                 //Create new connections
                 if(numConnectionsToMake > 0) {
