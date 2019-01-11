@@ -48,8 +48,8 @@ public class Connection {
     public void releaseResources(PhysicalNetwork ntwk){
         Edge[][] edges = ntwk.getNetwork();
         for(int i=1; i < path.length; i++){
-            edges[i-1][i].markRangeFree(slotsUsed);
-            edges[i][i-1].markRangeFree(slotsUsed);
+            edges[path[i-1]][path[i]].markRangeFree(slotsUsed);
+            edges[path[i]][path[i-1]].markRangeFree(slotsUsed);
         }
     }
 
@@ -59,9 +59,14 @@ public class Connection {
      */
     public void claimResources(PhysicalNetwork ntwk){
         Edge[][] edges = ntwk.getNetwork();
-        for(int i=1; i < path.length; i++){
-            edges[i-1][i].markRangeTaken(slotsUsed);
-            edges[i][i-1].markRangeTaken(slotsUsed);
+        if(path.length <= 1){
+            System.err.println("simply routing a connection to itself");
+        }
+        else {
+            for (int i = 1; i < path.length; i++) {
+                edges[path[i - 1]][path[i]].markRangeTaken(slotsUsed);
+                edges[path[i]][path[i - 1]].markRangeTaken(slotsUsed);
+            }
         }
     }
 

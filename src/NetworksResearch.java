@@ -11,14 +11,14 @@ public class NetworksResearch {
 
     public static void main(String[] args) {
         //Read in Network
-        PhysicalNetwork ntwk = new PhysicalNetwork("pt6");
+        PhysicalNetwork pNtwk = new PhysicalNetwork("pt6");
         try {
-            ntwk.createNetwork();
+            pNtwk.createNetwork();
         } catch (IOException e){
             System.err.println("IO Execption from reading the network caught");
         }
         // Establish virtual topology
-        VirtualTopology vt = new VirtualTopology(ntwk.getNumNodes());
+        VirtualTopology vt = new VirtualTopology(pNtwk.getNumNodes());
 
         //Read in Parameters and create TrafficGenerator
         TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
@@ -31,7 +31,7 @@ public class NetworksResearch {
         int idNum = 1;
         int numConnectionsToMake = 10; //TODO: make this a parameter to be read in
 
-        Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
+        Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
         eventQueue.add(start);
         eventQueue.add(end);
@@ -45,19 +45,19 @@ public class NetworksResearch {
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 //TODO: process start: route connection, update resources used
                 //Start stuff done by routing algorithm
-                int[] changeMeSlots = {2};
-                int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()};
+                int[] changeMeSlots = {2}; //dummy array that contains the number of slots used
+                int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()}; //dummy array for path (start to end)
                 currentConnection.setSlotsUsed(changeMeSlots); //in connection
                 currentConnection.setPath(changeMePath);  //in connection
                 //End stuff done by routing algorithm
-                currentConnection.claimResources(ntwk);  //physical network
+                currentConnection.claimResources(pNtwk);  //physical network
                 vt.addConnection(currentConnection);
 
                 //Create new connections
                 if(numConnectionsToMake > 0) {
                     prevTime = start.getTime();
                     idNum++;
-                    start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());
+                    start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
                     end = gen.newConnectionEnd(start);
                     insertInOrder(eventQueue, start);
                     insertInOrder(eventQueue, end);
@@ -67,7 +67,7 @@ public class NetworksResearch {
             else{  // Handle end nodes
                 //TODO: process end: release resources/update resources used
                 System.out.println(currentConnection.getConnectionNum() + ": END");
-                currentConnection.releaseResources(ntwk);
+                currentConnection.releaseResources(pNtwk);
                 vt.removeConnection(currentConnection.getOther());
             }
         }
