@@ -19,7 +19,7 @@ public class Edge {
         for(int i=0; i<slots.length; i++){
             str += i + ": " + slots[i] + "\n";
         }
-        str += distance;
+        //str += distance;
         return str;
     }
 
@@ -47,7 +47,7 @@ public class Edge {
      * @param range
      */
     public void markRangeTaken(int[] range){
-        for(int i=0; i<=range.length; i++){
+        for(int i=0; i<range.length; i++){
             if(range[i] >= slots.length){
                 System.err.println("Marking slots that don't exist");
             }
@@ -62,12 +62,12 @@ public class Edge {
      * @param range
      */
     public void markRangeFree(int[] range){
-        for(int i=0; i<=range.length; i++){
+        for(int i=0; i<range.length; i++){
             if(range[i] >= slots.length){
                 System.err.println("Marking slots that don't exist");
             }
             else {
-                slots[range[i]] = true;
+                slots[range[i]] = false;
             }
         }
     }

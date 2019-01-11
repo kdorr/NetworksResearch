@@ -82,13 +82,23 @@ public class PhysicalNetwork {
                 + "\nnumNodes: " + numNodes
                 + " numConnections: " + numConnections + "\n";
         for(int i=0; i<network.length; i++){
-            for(int j=0; j<network.length; j++){
-                str += network[i][j] + " | ";
+            str += "row " + i + "\n";
+            for(int j=0; j<network[i].length; j++){
+                str += "col " + j + " " + network[i][j] + " | ";
             }
             str += "\n";
         }
+        str += "Output finished";
         return str;
     }
+
+//    public String slotsToString(){
+//        for(int i=0; i<network.length; i++){
+//            for(int j=0; j<network.length; j++){
+//
+//            }
+//        }
+//    }
 
     //Getters and setters
 

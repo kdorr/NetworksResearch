@@ -45,6 +45,11 @@ public class Connection {
         } while(this.getDestNode() == this.getSrcNode());
     }
 
+    /**
+     * Mechanism to release resources previously in use by this connection.
+     * Assumes that the path is valid in the network.
+     * @param ntwk
+     */
     public void releaseResources(PhysicalNetwork ntwk){
         Edge[][] edges = ntwk.getNetwork();
         for(int i=1; i < path.length; i++){
@@ -54,6 +59,8 @@ public class Connection {
     }
 
     /**
+     * Mechanism to claim resources in use by this connection.
+     * Assumes that the path is valid in the network.
      * Only to be used after connection is routed!!
      * @param ntwk
      */
