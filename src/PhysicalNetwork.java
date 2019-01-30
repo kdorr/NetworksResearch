@@ -12,6 +12,7 @@ public class PhysicalNetwork {
     private int numSlots;
     private int numConnections;
     private Edge[][] network;
+    private int[] nodeList; // for convenience of routing algorithms
 
     /**
      * Constructor.
@@ -23,6 +24,7 @@ public class PhysicalNetwork {
         numSlots = 0;
         numConnections = 0;
         network = new Edge[0][0];
+        nodeList = new int[0];
     }
 
     /**
@@ -57,6 +59,12 @@ public class PhysicalNetwork {
         numNodes = Integer.parseInt(ntwk.get(0)[0]); //TODO possible NumberFormatException
         numConnections = Integer.parseInt(ntwk.get(0)[1]);
         numSlots = Integer.parseInt(ntwk.get(0)[2]);
+
+        // Node list is an array containing unique nodes in the network [0, numNodes)
+        nodeList = new int[numNodes];
+        for(int i=0; i<numNodes; i++){
+            nodeList[i] = i;
+        }
 
         /**
          * Parse Rest of Lines (edges in the network):
@@ -140,5 +148,13 @@ public class PhysicalNetwork {
 
     public void setNetwork(Edge[][] network) {
         this.network = network;
+    }
+
+    public int[] getNodeList() {
+        return nodeList;
+    }
+
+    public void setNodeList(int[] nodeList) {
+        this.nodeList = nodeList;
     }
 }
