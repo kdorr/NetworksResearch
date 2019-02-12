@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DijkstrasRoutingAlgorithm {
-    private PhysicalNetwork pn;
-    private int[] slots;
+    private PhysicalNetwork pn; //the physical network from the main program
+    private int[] slots; //the slots being used.
     private boolean[] isVisited; //true if visited, false if unvisited.
     private int[][] pathTable; //1st dimension: node, 2nd dimension: 0-distance, 1-predecessor
 
@@ -21,17 +21,12 @@ public class DijkstrasRoutingAlgorithm {
     }
 
     /**
-     * -Start w/ source.
-     * -For all of the nodes that aren't in the path, find the distance from source
-     * to that node.
-     * -Add the node w/ the minimum distance to path
-     *
-     * Note: a node is adjacent if pn.network[u][v] != null.
-     * Infinity = Integer.MAX_VALUE;
+     * Helper method for determinePath. Finds each node's predecessor along the shortest path.
+     * @param src The sorce node
+     * @param dest The destination node
      */
     public void calcTable(int src, int dest){
         int numNodes = pn.getNodeList().length;
-        //TODO: use this.pathTable instead of table
         this.pathTable = new int[numNodes][2];
         //initialization
         for(int i=0; i<numNodes; i++){
@@ -70,7 +65,15 @@ public class DijkstrasRoutingAlgorithm {
         }while(numVisited<numNodes && !destVisited);
     }
 
+    /**
+     * Finds a path from the source node to the destination node using Dijkstra's shortest path algorithm.
+     * @param src The source node
+     * @param dest The destination node
+     * @return an integer array containing the path
+     */
     public int[] determinePath(int src, int dest){
+        int[] path;
+        //calculate the table
         calcTable(src, dest);
 
         //once the table is calculated, get the path
@@ -81,7 +84,7 @@ public class DijkstrasRoutingAlgorithm {
             predecessor = pathTable[predecessor][1];
             backwards.add(predecessor);
         }
-        int[] path = new int[backwards.size()];
+        path = new int[backwards.size()];
         int fwd = 0;
         for(int i=backwards.size()-1; i>=0; i--){
             path[fwd] = backwards.get(i);
