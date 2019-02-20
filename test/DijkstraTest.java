@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DijkstraTest {
@@ -46,12 +47,47 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
-        int[] path = test.determinePath(0, 3);
+        test.routeTraffic(0, 3);
+        int[] path = test.getPath();
 
         //the path should be [0, 1, 2, 3] for this case (worked out on paper)
         assertEquals(0, path[0]);
         assertEquals(1, path[1]);
         assertEquals(2, path[2]);
         assertEquals(3, path[3]);
+    }
+
+    @Test
+    void determineSlotTest(){
+        PhysicalNetwork pNtwk = new PhysicalNetwork("pt6");
+        try {
+            pNtwk.createNetwork();
+        } catch (IOException e){
+            System.err.println("IO Execption from reading the network caught");
+        }
+
+        DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
+        test.routeTraffic(0, 3);
+        int[] slots = test.getSlots();
+        int[] expected = {0};
+        assertArrayEquals(expected, slots);
+
+        //Mark resources as taken on slot 0. Do this via a Connection??
+        Connection first = new Connection();
+        first.setSlotsUsed(slots);
+        first.setPath(test.getPath());
+        first.claimResources(pNtwk);
+
+        //route more traffic from 0 to 3.
+        DijkstrasRoutingAlgorithm test2 = new DijkstrasRoutingAlgorithm(pNtwk);
+        test2.routeTraffic(0, 3);
+        slots = test2.getSlots();
+        expected[0] = 1;
+        assertArrayEquals(expected, slots); //assert that slots == {1};
+
+        //Mark resources as taken on entire network
+        //Try to route traffic from 0 to 3. How should this be handled?
+
+
     }
 }

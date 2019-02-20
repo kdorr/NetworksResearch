@@ -45,6 +45,7 @@ public class NetworksResearch {
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 //TODO: process start: route connection, update resources used
                 //Start stuff done by routing algorithm
+
                 int[] changeMeSlots = {2}; //dummy array that contains the number of slots used
                 int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()}; //dummy array for path (start to end)
                 currentConnection.setSlotsUsed(changeMeSlots); //in connection

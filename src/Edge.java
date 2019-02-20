@@ -28,7 +28,7 @@ public class Edge {
      * @param range
      * @return true if available and false if not
      */
-    public boolean isRangeFree(int[] range){
+    public boolean isSlotRangeFree(int[] range){
         boolean free = true;
         for(int i=0; i<range.length; i++) {
             if (range[i] >= slots.length || range[i] < 0) {

@@ -3,6 +3,7 @@ import java.util.Arrays;
 
 public class DijkstrasRoutingAlgorithm {
     private PhysicalNetwork pn; //the physical network from the main program
+    private int[] path; //the path determined by the algorithm
     private int[] slots; //the slots being used.
     private boolean[] isVisited; //true if visited, false if unvisited.
     private int[][] pathTable; //1st dimension: node, 2nd dimension: 0-distance, 1-predecessor
@@ -21,6 +22,16 @@ public class DijkstrasRoutingAlgorithm {
     }
 
     /**
+     * Helper function for now (will need to clean this up big time)
+     * @param src
+     * @param dest
+     */
+    public void routeTraffic(int src, int dest){
+        determinePath(src, dest);
+        determineSlots();
+    }
+
+    /**
      * Helper method for determinePath. Finds each node's predecessor along the shortest path.
      * @param src The sorce node
      * @param dest The destination node
@@ -35,7 +46,6 @@ public class DijkstrasRoutingAlgorithm {
         }
         pathTable[src][0] = 0; //distance = 0
         pathTable[src][1] = src; //predecessor = src
-        //isVisited[src] = true;
 
         int numVisited=0;
         boolean destVisited = false;
@@ -49,7 +59,7 @@ public class DijkstrasRoutingAlgorithm {
             }
             //calculate distances for all adjacent nodes
             for(int i=0; i<numNodes; i++){
-                if(!isVisited[i] && pn.getNetwork()[min][i]!=null){
+                if(!isVisited[i] && pn.getNetwork()[min][i]!=null){  //Dijkstra's the other way should modify this
                         if (pn.getNetwork()[min][i].getDistance() < pathTable[i][0]) {
                             pathTable[i][0] = pn.getNetwork()[min][i].getDistance();
                             pathTable[i][1] = min;
@@ -67,12 +77,12 @@ public class DijkstrasRoutingAlgorithm {
 
     /**
      * Finds a path from the source node to the destination node using Dijkstra's shortest path algorithm.
+     * //TODO: should be void??????
      * @param src The source node
      * @param dest The destination node
      * @return an integer array containing the path
      */
-    public int[] determinePath(int src, int dest){
-        int[] path;
+    public void determinePath(int src, int dest){
         //calculate the table
         calcTable(src, dest);
 
@@ -90,7 +100,53 @@ public class DijkstrasRoutingAlgorithm {
             path[fwd] = backwards.get(i);
             fwd++;
         }
-        return path;
+    }
+
+    /**
+     * Only to be called after path determined. Only looking at one slot. Need to generalize. Also doesn't work with condition that no slots available.
+     * @return
+     */
+    public void determineSlots(){
+        boolean pathFound = false;
+        int testSlot = 0;
+        int[] range = {0}; //for generalization to more than one slot
+        while(!pathFound && testSlot<pn.getNumNodes()) {
+            if(pathWithSelectedSlotsAvailable(testSlot)){
+                pathFound = true;
+            }
+            else {
+                testSlot++;
+            }
+        }
+
+        if(!pathFound){
+            System.err.println("The shortest path isn't available for any of the slots. This needs to be handled properly");
+        }
+
+        slots = new int[1];
+        slots[0] = testSlot;
+
+        //for generalization to more than one slot:
+//        slots = new int[range.length]; //to make sure slots is the correct length
+//        for(int i=0; i<range.length; i++){
+//            slots[i] = range[i];
+//        }
+        //end stuff for generalization to more than one slot
+    }
+
+    /**
+     * maybe combine with determineSlots???
+     * @param slot
+     * @return
+     */
+    public boolean pathWithSelectedSlotsAvailable(int slot){
+        int[] range = {slot};
+        for(int i=0; i<path.length-1; i++){
+            if(!pn.getNetwork()[i][i+1].isSlotRangeFree(range)){ //are the slots from node i to node i+1 in the path free?
+                return false;
+            }
+        }
+        return true;
     }
 
     // Getters and setters
@@ -124,5 +180,13 @@ public class DijkstrasRoutingAlgorithm {
 
     public void setPathTable(int[][] pathTable) {
         this.pathTable = pathTable;
+    }
+
+    public int[] getPath() {
+        return path;
+    }
+
+    public void setPath(int[] path) {
+        this.path = path;
     }
 }
