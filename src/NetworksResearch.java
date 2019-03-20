@@ -11,17 +11,17 @@ public class NetworksResearch {
 
     public static void main(String[] args) {
         //Read in Network
-        PhysicalNetwork pNtwk = new PhysicalNetwork("pt6");
+        PhysicalNetwork pNtwk = new PhysicalNetwork("ptDebug");
         try {
             pNtwk.createNetwork();
         } catch (IOException e){
-            System.err.println("IO Execption from reading the network caught");
+            System.err.println("main: IO Execption from reading the network caught");
         }
         // Establish virtual topology
         VirtualTopology vt = new VirtualTopology(pNtwk.getNumNodes());
 
         //Read in Parameters and create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
+        TrafficGenerator gen = new TrafficGenerator(2, 10000, 16); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();
@@ -29,10 +29,12 @@ public class NetworksResearch {
         //Initialize eventQueue with first connection
         double prevTime = 0;
         int idNum = 1;
-        int numConnectionsToMake = 10; //TODO: make this a parameter to be read in
+        int numConnectionsToMake = 50; //TODO: make this a parameter to be read in
+        int numRejectedConnections = 0;
 
         Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
+        start.setOther(end);
         eventQueue.add(start);
         eventQueue.add(end);
         numConnectionsToMake--;
@@ -40,19 +42,23 @@ public class NetworksResearch {
         while(numConnectionsToMake > 0 || eventQueue.peek()!=null){
             Connection currentConnection = eventQueue.removeFirst();
 
-            System.out.println(currentConnection.getConnectionNum() + ":\n" + vt.toString());
+            System.out.println(currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ":");
 
             if(!currentConnection.getIsEnd()){  // Handle start nodes
-                //TODO: process start: route connection, update resources used
-                //Start stuff done by routing algorithm
-
-                int[] changeMeSlots = {2}; //dummy array that contains the number of slots used
-                int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()}; //dummy array for path (start to end)
-                currentConnection.setSlotsUsed(changeMeSlots); //in connection
-                currentConnection.setPath(changeMePath);  //in connection
-                //End stuff done by routing algorithm
-                currentConnection.claimResources(pNtwk);  //physical network
-                vt.addConnection(currentConnection);
+                DijkstrasRoutingAlgorithm route = new DijkstrasRoutingAlgorithm(pNtwk);
+                if(route.routeTraffic(currentConnection.getSrcNode(), currentConnection.getDestNode())){ //if a path was found
+                    currentConnection.setSlotsUsed(route.getPath()); //in connection
+                    currentConnection.setPath(route.getSlots());  //in connection
+                    //End stuff done by routing algorithm
+                    currentConnection.claimResources(pNtwk);  //physical network
+                    vt.addConnection(currentConnection);
+                    System.out.println("routed:\n" + vt.toString());
+                }
+                else{
+                    numRejectedConnections++;
+                    System.out.println("----------Rejected!!-------------");
+                    //remove end node?
+                }
 
                 //Create new connections
                 if(numConnectionsToMake > 0) {
@@ -60,6 +66,7 @@ public class NetworksResearch {
                     idNum++;
                     start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
                     end = gen.newConnectionEnd(start);
+                    start.setOther(end);
                     insertInOrder(eventQueue, start);
                     insertInOrder(eventQueue, end);
                     numConnectionsToMake--;
@@ -70,8 +77,10 @@ public class NetworksResearch {
                 System.out.println(currentConnection.getConnectionNum() + ": END");
                 currentConnection.releaseResources(pNtwk);
                 vt.removeConnection(currentConnection.getOther());
+                System.out.println(vt.toString());
             }
         }
+        System.out.println("rejected Connections: " + numRejectedConnections);
     }
 
     /**

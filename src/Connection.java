@@ -66,8 +66,8 @@ public class Connection {
      */
     public void claimResources(PhysicalNetwork ntwk){
         Edge[][] edges = ntwk.getNetwork();
-        if(path.length <= 1){
-            System.err.println("simply routing a connection to itself");
+        if(path.length < 1){
+            System.err.println("Connection: claim: simply routing a connection to itself");
         }
         else {
             for (int i = 1; i < path.length; i++) {
@@ -133,6 +133,7 @@ public class Connection {
 
     public void setSlotsUsed(int[] slotsUsed) {
         this.slotsUsed = slotsUsed;
+        this.other.slotsUsed = slotsUsed;
     }
 
     public int[] getPath() {
@@ -141,6 +142,7 @@ public class Connection {
 
     public void setPath(int[] path) {
         this.path = path;
+        this.other.path = path;
     }
 
     public Connection getOther() {

@@ -14,7 +14,6 @@ public class DijkstrasRoutingAlgorithm {
 
     public DijkstrasRoutingAlgorithm(PhysicalNetwork pn){
         this.pn = pn;
-        Edge[][] ntwk = pn.getNetwork(); //TODO: is this necessary??
         isVisited = new boolean[pn.getNodeList().length];
         for(int i=0; i<pn.getNodeList().length; i++){
             isVisited[i] = false;
@@ -26,14 +25,19 @@ public class DijkstrasRoutingAlgorithm {
      * @param src
      * @param dest
      */
-    public void routeTraffic(int src, int dest){
+    public boolean routeTraffic(int src, int dest){
         determinePath(src, dest);
-        determineSlots();
+        if(determineSlots()){  //if the connection wasn't rejected.
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
      * Helper method for determinePath. Finds each node's predecessor along the shortest path.
-     * @param src The sorce node
+     * @param src The source node
      * @param dest The destination node
      */
     public void calcTable(int src, int dest){
@@ -77,7 +81,6 @@ public class DijkstrasRoutingAlgorithm {
 
     /**
      * Finds a path from the source node to the destination node using Dijkstra's shortest path algorithm.
-     * //TODO: should be void??????
      * @param src The source node
      * @param dest The destination node
      * @return an integer array containing the path
@@ -106,11 +109,11 @@ public class DijkstrasRoutingAlgorithm {
      * Only to be called after path determined. Only looking at one slot. Need to generalize. Also doesn't work with condition that no slots available.
      * @return
      */
-    public void determineSlots(){
+    public boolean determineSlots(){
         boolean pathFound = false;
         int testSlot = 0;
         int[] range = {0}; //for generalization to more than one slot
-        while(!pathFound && testSlot<pn.getNumNodes()) {
+        while(!pathFound && testSlot<pn.getNumSlots()) {
             if(pathWithSelectedSlotsAvailable(testSlot)){
                 pathFound = true;
             }
@@ -119,12 +122,14 @@ public class DijkstrasRoutingAlgorithm {
             }
         }
 
+        /* Check for rejected connection */
         if(!pathFound){
-            System.err.println("The shortest path isn't available for any of the slots. This needs to be handled properly");
+            return false;
         }
 
         slots = new int[1];
         slots[0] = testSlot;
+        return true; // success!
 
         //for generalization to more than one slot:
 //        slots = new int[range.length]; //to make sure slots is the correct length
@@ -142,7 +147,7 @@ public class DijkstrasRoutingAlgorithm {
     public boolean pathWithSelectedSlotsAvailable(int slot){
         int[] range = {slot};
         for(int i=0; i<path.length-1; i++){
-            if(!pn.getNetwork()[i][i+1].isSlotRangeFree(range)){ //are the slots from node i to node i+1 in the path free?
+            if(!pn.getNetwork()[path[i]][path[i+1]].isSlotRangeFree(range) || !pn.getNetwork()[path[i+1]][path[i]].isSlotRangeFree(range)){ //are the slots from node i to node i+1 in the path free?
                 return false;
             }
         }

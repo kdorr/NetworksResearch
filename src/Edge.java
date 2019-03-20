@@ -32,7 +32,7 @@ public class Edge {
         boolean free = true;
         for(int i=0; i<range.length; i++) {
             if (range[i] >= slots.length || range[i] < 0) {
-                System.err.println("Error: Requesting slots that don't exist");
+                System.err.println("Edge Error: Requesting slots that don't exist");
             } else {
                 if (slots[range[i]] == true) {
                     free = false;
@@ -49,7 +49,7 @@ public class Edge {
     public void markRangeTaken(int[] range){
         for(int i=0; i<range.length; i++){
             if(range[i] >= slots.length){
-                System.err.println("Marking slots that don't exist");
+                System.err.println("Edge: Marking slots that don't exist");
             }
             else {
                 slots[range[i]] = true;
@@ -64,7 +64,7 @@ public class Edge {
     public void markRangeFree(int[] range){
         for(int i=0; i<range.length; i++){
             if(range[i] >= slots.length){
-                System.err.println("Marking slots that don't exist");
+                System.err.println("Edge: Marking slots free that don't exist");
             }
             else {
                 slots[range[i]] = false;
