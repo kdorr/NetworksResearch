@@ -46,6 +46,16 @@ public class Connection {
     }
 
     /**
+     * For debugging.
+     * @param src
+     * @param dest
+     */
+    public void pickSrcAndDestDebug(int src, int dest){
+        this.setSrcNode(src);
+        this.setDestNode(dest);
+    }
+
+    /**
      * Mechanism to release resources previously in use by this connection.
      * Assumes that the path is valid in the network.
      * @param ntwk
@@ -65,8 +75,9 @@ public class Connection {
      * @param ntwk
      */
     public void claimResources(PhysicalNetwork ntwk){
+        System.out.println("CR Path: " + Arrays.toString(path));
         Edge[][] edges = ntwk.getNetwork();
-        if(path.length < 1){
+        if(path.length <= 1){
             System.err.println("Connection: claim: simply routing a connection to itself");
         }
         else {
@@ -141,8 +152,12 @@ public class Connection {
     }
 
     public void setPath(int[] path) {
-        this.path = path;
-        this.other.path = path;
+        this.path = new int[path.length];
+        this.other.path = new int[path.length];
+        for(int i=0; i<path.length; i++){
+            this.path[i] = path[i];
+            this.other.path[i] = path[i];
+        }
     }
 
     public Connection getOther() {

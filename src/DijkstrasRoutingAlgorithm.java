@@ -146,6 +146,7 @@ public class DijkstrasRoutingAlgorithm {
      */
     public boolean pathWithSelectedSlotsAvailable(int slot){
         int[] range = {slot};
+        System.out.println("path: " + Arrays.toString(path));
         for(int i=0; i<path.length-1; i++){
             if(!pn.getNetwork()[path[i]][path[i+1]].isSlotRangeFree(range) || !pn.getNetwork()[path[i+1]][path[i]].isSlotRangeFree(range)){ //are the slots from node i to node i+1 in the path free?
                 return false;
