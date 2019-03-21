@@ -15,7 +15,7 @@ public class TrafficGenerator {
 
     public TrafficGenerator(){
         this.avgArrivalTime = 2; // arbitrary default
-        this.avgServiceTime = 5; // arbitrary default
+        this.avgServiceTime = 50; // arbitrary default
         this.maxConnectionBandwidth = 16; // arbitrary default
     }
 

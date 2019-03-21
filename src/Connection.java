@@ -75,7 +75,6 @@ public class Connection {
      * @param ntwk
      */
     public void claimResources(PhysicalNetwork ntwk){
-        System.out.println("CR Path: " + Arrays.toString(path));
         Edge[][] edges = ntwk.getNetwork();
         if(path.length <= 1){
             System.err.println("Connection: claim: simply routing a connection to itself");

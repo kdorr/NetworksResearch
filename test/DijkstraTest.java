@@ -23,22 +23,22 @@ public class DijkstraTest {
         //Test distances (expected worked out on paper)
         assertEquals(0, test.getPathTable()[0][0]);
         assertEquals(500, test.getPathTable()[1][0]);
-        assertEquals(1000, test.getPathTable()[2][0]);
-        assertEquals(600, test.getPathTable()[3][0]);
-        assertEquals(600, test.getPathTable()[4][0]);
+        assertEquals(1500, test.getPathTable()[2][0]);
+        assertEquals(2100, test.getPathTable()[3][0]);
+        assertEquals(1500, test.getPathTable()[4][0]);
         assertEquals(500, test.getPathTable()[5][0]);
         //Test predecessors (expected worked out on paper)
         assertEquals(0, test.getPathTable()[0][1]);
         assertEquals(0, test.getPathTable()[1][1]);
         assertEquals(1, test.getPathTable()[2][1]);
-        assertEquals(2, test.getPathTable()[3][1]);
-        assertEquals(3, test.getPathTable()[4][1]);
+        assertEquals(2, test.getPathTable()[3][1]); // Could also be 4 depending on tie break
+        assertEquals(5, test.getPathTable()[4][1]);
         assertEquals(0, test.getPathTable()[5][1]);
     }
 
     @Test
     void determinePathTest(){
-        PhysicalNetwork pNtwk = new PhysicalNetwork("pt6");
+        PhysicalNetwork pNtwk = new PhysicalNetwork("ptDebug");
         try {
             pNtwk.createNetwork();
         } catch (IOException e){
@@ -46,14 +46,14 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
-        test.routeTraffic(0, 3);
+        test.routeTraffic(3, 0);
         int[] path = test.getPath();
 
         //the path should be [0, 1, 2, 3] for this case (worked out on paper)
-        assertEquals(0, path[0]);
-        assertEquals(1, path[1]);
-        assertEquals(2, path[2]);
-        assertEquals(3, path[3]);
+        assertEquals(3, path[0]);
+        assertEquals(2, path[1]);
+        assertEquals(1, path[2]);
+        assertEquals(0, path[3]);
     }
 
     @Test

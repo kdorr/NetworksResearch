@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -22,9 +23,7 @@ public class NetworksResearch {
         VirtualTopology vt = new VirtualTopology(pNtwk.getNumNodes());
 
         //Read in Parameters and create TrafficGenerator
-        //DEBUG
-        //TrafficGenerator gen = new TrafficGenerator(2, 10000, 16); //arbitrary arrival and service times
-        TrafficGeneratorDebug gen = new TrafficGeneratorDebug();
+        TrafficGenerator gen = new TrafficGenerator(2, 3, 1); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();
@@ -32,12 +31,10 @@ public class NetworksResearch {
         //Initialize eventQueue with first connection
         double prevTime = 0;
         int idNum = 1;
-        int numConnectionsToMake = 10; //TODO: make this a parameter to be read in
+        int numConnectionsToMake = 50; //TODO: make this a parameter to be read in
         int numRejectedConnections = 0;
 
-        //DEBUG
-        //Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());  //TODO: maybe initialize at beginning of main
-        Connection start = gen.newConnectionStart(idNum, prevTime, 0);  //DEBUG
+        Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());  //TODO: maybe initialize at beginning of main
         Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
         start.setOther(end);
         eventQueue.add(start);
@@ -57,7 +54,10 @@ public class NetworksResearch {
                     //End stuff done by routing algorithm
                     currentConnection.claimResources(pNtwk);  //physical network
                     vt.addConnection(currentConnection);
-                    System.out.println("routed:\n" + vt.toString());
+                    System.out.println("routed: " +
+                                    "path:" + Arrays.toString(currentConnection.getPath())
+                                    + " slot: " + Arrays.toString(currentConnection.getSlotsUsed())
+                                    + "\n" + vt.toString());
                 }
                 else{
                     numRejectedConnections++;
@@ -71,9 +71,7 @@ public class NetworksResearch {
                 if(numConnectionsToMake > 0) {
                     prevTime = start.getTime();
                     idNum++;
-                    //DEBUG
-                    //start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
-                    start = gen.newConnectionStart(idNum, prevTime, 0); //DEBUG
+                    start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
                     end = gen.newConnectionEnd(start);
                     start.setOther(end);
                     insertInOrder(eventQueue, start);
@@ -86,7 +84,7 @@ public class NetworksResearch {
                 System.out.println(currentConnection.getConnectionNum() + ": END");
                 currentConnection.releaseResources(pNtwk);
                 vt.removeConnection(currentConnection.getOther());
-                System.out.println(vt.toString());
+                //System.out.println(vt.toString());
             }
         }
         System.out.println("rejected Connections: " + numRejectedConnections);

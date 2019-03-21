@@ -55,17 +55,20 @@ public class DijkstrasRoutingAlgorithm {
         boolean destVisited = false;
         do {
             //find the unvisited node with the least distance
-            int min = Integer.MAX_VALUE;
+            int minVal = Integer.MAX_VALUE;
+            int min = -99; //minIndex
             for(int i=0; i<numNodes; i++){
-                if(pathTable[i][0] < min && !isVisited[i]){
+                if(pathTable[i][0] < minVal && !isVisited[i]){
+                    minVal = pathTable[i][0];
                     min = i;
                 }
             }
             //calculate distances for all adjacent nodes
             for(int i=0; i<numNodes; i++){
                 if(!isVisited[i] && pn.getNetwork()[min][i]!=null){  //Dijkstra's the other way should modify this
-                        if (pn.getNetwork()[min][i].getDistance() < pathTable[i][0]) {
-                            pathTable[i][0] = pn.getNetwork()[min][i].getDistance();
+                        int newDistance = pn.getNetwork()[min][i].getDistance() + pathTable[min][0];
+                        if (newDistance < pathTable[i][0]) {
+                            pathTable[i][0] = newDistance;
                             pathTable[i][1] = min;
                         }
                 }
@@ -146,7 +149,6 @@ public class DijkstrasRoutingAlgorithm {
      */
     public boolean pathWithSelectedSlotsAvailable(int slot){
         int[] range = {slot};
-        System.out.println("path: " + Arrays.toString(path));
         for(int i=0; i<path.length-1; i++){
             if(!pn.getNetwork()[path[i]][path[i+1]].isSlotRangeFree(range) || !pn.getNetwork()[path[i+1]][path[i]].isSlotRangeFree(range)){ //are the slots from node i to node i+1 in the path free?
                 return false;
