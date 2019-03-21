@@ -10,5 +10,5 @@ Creation of the event-based simulation.
 - Network Representation
 - Mechanics for trying different routing algorithms
 
-## Spring 2018:
-Trying different routing algorithms.
+## Spring 2019:
+Implementing first fit slot assignment with Dijkstra's shortest path algorithm.
