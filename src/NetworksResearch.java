@@ -1,5 +1,5 @@
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -11,17 +11,17 @@ public class NetworksResearch {
 
     public static void main(String[] args) {
         //Read in Network
-        PhysicalNetwork ntwk = new PhysicalNetwork("pt6");
+        PhysicalNetwork pNtwk = new PhysicalNetwork("ptDebug");
         try {
-            ntwk.createNetwork();
+            pNtwk.createNetwork();
         } catch (IOException e){
-            System.err.println("IO Execption from reading the network caught");
+            System.err.println("main: IO Execption from reading the network caught");
         }
         // Establish virtual topology
-        VirtualTopology vt = new VirtualTopology(ntwk.getNumNodes());
+        VirtualTopology vt = new VirtualTopology(pNtwk.getNumNodes());
 
         //Read in Parameters and create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(2, 5, 16); //arbitrary arrival and service times
+        TrafficGenerator gen = new TrafficGenerator(2, 3, 1); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();
@@ -29,48 +29,61 @@ public class NetworksResearch {
         //Initialize eventQueue with first connection
         double prevTime = 0;
         int idNum = 1;
-        int numConnectionsToMake = 10; //TODO: make this a parameter to be read in
+        int numConnectionsToMake = 50;
+        int numRejectedConnections = 0;
 
-        Connection start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());  //TODO: maybe initialize at beginning of main
-        Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
+        Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
+        Connection end = gen.newConnectionEnd(start);
+        start.setOther(end);
         eventQueue.add(start);
         eventQueue.add(end);
         numConnectionsToMake--;
+
         // Process events in the queue and create new nodes as needed.
         while(numConnectionsToMake > 0 || eventQueue.peek()!=null){
             Connection currentConnection = eventQueue.removeFirst();
 
-            System.out.println(currentConnection.getConnectionNum() + ":\n" + vt.toString());
+            System.out.println(currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ":");
 
-            //System.out.println(currentConnection.toString() + "\n");
             if(!currentConnection.getIsEnd()){  // Handle start nodes
-                //TODO: process start: route connection, update resources used
-                int[] changeMeSlots = {2};
-                int[] changeMePath = {currentConnection.getSrcNode(), currentConnection.getDestNode()};
-                currentConnection.setSlotsUsed(changeMeSlots);
-                currentConnection.setPath(changeMePath);
-                vt.addConnection(currentConnection);
-
-                System.out.println("Just added " + currentConnection.getConnectionNum());
+                DijkstrasRoutingAlgorithm route = new DijkstrasRoutingAlgorithm(pNtwk);
+                if(route.routeTraffic(currentConnection.getSrcNode(), currentConnection.getDestNode())){ //if a path was found
+                    currentConnection.setPath(route.getPath());
+                    currentConnection.setSlotsUsed(route.getSlots());
+                    currentConnection.claimResources(pNtwk);
+                    vt.addConnection(currentConnection);
+                    System.out.println("routed: " +
+                                    "path:" + Arrays.toString(currentConnection.getPath())
+                                    + " slot: " + Arrays.toString(currentConnection.getSlotsUsed())
+                                    + "\n" + vt.toString());
+                }
+                else{ //no path found
+                    numRejectedConnections++;
+                    System.out.println("----------Rejected!!-------------");
+                    //remove the end connection from the queue
+                    eventQueue.remove(currentConnection.getOther());
+                }
 
                 //Create new connections
                 if(numConnectionsToMake > 0) {
                     prevTime = start.getTime();
                     idNum++;
-                    start = gen.newConnectionStart(idNum, prevTime, ntwk.getNumNodes());
+                    start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
                     end = gen.newConnectionEnd(start);
+                    start.setOther(end);
                     insertInOrder(eventQueue, start);
                     insertInOrder(eventQueue, end);
                     numConnectionsToMake--;
                 }
             }
             else{  // Handle end nodes
-                //TODO: process end: release resources/update resources used
                 System.out.println(currentConnection.getConnectionNum() + ": END");
-                vt.removeConnection(currentConnection.getOther());  //physical tear down happen here???
-                // or here?
+                currentConnection.releaseResources(pNtwk);
+                vt.removeConnection(currentConnection.getOther());
+                //System.out.println(vt.toString());
             }
         }
+        System.out.println("rejected Connections: " + numRejectedConnections);
     }
 
     /**

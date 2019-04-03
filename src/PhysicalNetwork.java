@@ -12,6 +12,7 @@ public class PhysicalNetwork {
     private int numSlots;
     private int numConnections;
     private Edge[][] network;
+    private int[] nodeList; // for convenience of routing algorithms
 
     /**
      * Constructor.
@@ -23,6 +24,7 @@ public class PhysicalNetwork {
         numSlots = 0;
         numConnections = 0;
         network = new Edge[0][0];
+        nodeList = new int[0];
     }
 
     /**
@@ -58,6 +60,12 @@ public class PhysicalNetwork {
         numConnections = Integer.parseInt(ntwk.get(0)[1]);
         numSlots = Integer.parseInt(ntwk.get(0)[2]);
 
+        // Node list is an array containing unique nodes in the network [0, numNodes)
+        nodeList = new int[numNodes];
+        for(int i=0; i<numNodes; i++){
+            nodeList[i] = i;
+        }
+
         /**
          * Parse Rest of Lines (edges in the network):
          * [0] = src, [1] = dest, [2] = numFibers, [3] = distance
@@ -82,13 +90,23 @@ public class PhysicalNetwork {
                 + "\nnumNodes: " + numNodes
                 + " numConnections: " + numConnections + "\n";
         for(int i=0; i<network.length; i++){
-            for(int j=0; j<network.length; j++){
-                str += network[i][j] + " | ";
+            str += "row " + i + "\n";
+            for(int j=0; j<network[i].length; j++){
+                str += "col " + j + " " + network[i][j] + " | ";
             }
             str += "\n";
         }
+        str += "Output finished";
         return str;
     }
+
+//    public String slotsToString(){
+//        for(int i=0; i<network.length; i++){
+//            for(int j=0; j<network.length; j++){
+//
+//            }
+//        }
+//    }
 
     //Getters and setters
 
@@ -130,5 +148,13 @@ public class PhysicalNetwork {
 
     public void setNetwork(Edge[][] network) {
         this.network = network;
+    }
+
+    public int[] getNodeList() {
+        return nodeList;
+    }
+
+    public void setNodeList(int[] nodeList) {
+        this.nodeList = nodeList;
     }
 }

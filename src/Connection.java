@@ -45,6 +45,48 @@ public class Connection {
         } while(this.getDestNode() == this.getSrcNode());
     }
 
+    /**
+     * For debugging only.
+     * @param src The desired source node
+     * @param dest The desired destination node
+     */
+    public void pickSrcAndDestDebug(int src, int dest){
+        this.setSrcNode(src);
+        this.setDestNode(dest);
+    }
+
+    /**
+     * Mechanism to release resources previously in use by this connection.
+     * Assumes that the path is valid in the network.
+     * @param ntwk The physical network
+     */
+    public void releaseResources(PhysicalNetwork ntwk){
+        Edge[][] edges = ntwk.getNetwork();
+        for(int i=1; i < path.length; i++){
+            edges[path[i-1]][path[i]].markRangeFree(slotsUsed);
+            edges[path[i]][path[i-1]].markRangeFree(slotsUsed);
+        }
+    }
+
+    /**
+     * Mechanism to claim resources in use by this connection.
+     * Assumes that the path is valid in the network.
+     * Only to be used after connection is routed!!
+     * @param ntwk
+     */
+    public void claimResources(PhysicalNetwork ntwk){
+        Edge[][] edges = ntwk.getNetwork();
+        if(path.length <= 1){
+            System.err.println("Connection: claim: simply routing a connection to itself");
+        }
+        else {
+            for (int i = 1; i < path.length; i++) {
+                edges[path[i - 1]][path[i]].markRangeTaken(slotsUsed);
+                edges[path[i]][path[i - 1]].markRangeTaken(slotsUsed);
+            }
+        }
+    }
+
     // Getters and setters
 
     public boolean getIsEnd() {
@@ -101,6 +143,7 @@ public class Connection {
 
     public void setSlotsUsed(int[] slotsUsed) {
         this.slotsUsed = slotsUsed;
+        this.other.slotsUsed = slotsUsed;
     }
 
     public int[] getPath() {
@@ -108,7 +151,12 @@ public class Connection {
     }
 
     public void setPath(int[] path) {
-        this.path = path;
+        this.path = new int[path.length];
+        this.other.path = new int[path.length];
+        for(int i=0; i<path.length; i++){
+            this.path[i] = path[i];
+            this.other.path[i] = path[i];
+        }
     }
 
     public Connection getOther() {

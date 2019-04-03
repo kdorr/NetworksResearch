@@ -2,25 +2,24 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 
 /**
- * Created by Kimberly Orr on 8/29/18.
+ * Created by Kimberly Orr on 3/20/19.
  * Class to generate traffic for the network including arrival times,
- * connection length, source and destination nodes, and maxConnectionBandwidth.
+ * connection length, source and destination nodes, and maxConnectionBandwidth for easy debugging.
  */
-public class TrafficGenerator {
+public class TrafficGeneratorDebug {
     private double avgArrivalTime;
     private double avgServiceTime;
     private int maxConnectionBandwidth;
 
     // Constructors
 
-    public TrafficGenerator(){
-        this.avgArrivalTime = 2; // arbitrary default
-        this.avgServiceTime = 50; // arbitrary default
-        this.maxConnectionBandwidth = 16; // arbitrary default
+    public TrafficGeneratorDebug(){
+        this.avgArrivalTime = 1; // arbitrary default
+        this.avgServiceTime = 5; // arbitrary default
+        this.maxConnectionBandwidth = 1; // arbitrary default
     }
 
-    //TODO: add constructor that handles parameters (read in from a file in NetworksResearch.java)
-    public TrafficGenerator(double avgArrivalTime, double avgServiceTime, int maxConnectionBandwidth){
+    public TrafficGeneratorDebug(double avgArrivalTime, double avgServiceTime, int maxConnectionBandwidth){
         this.avgArrivalTime = avgArrivalTime;
         this.avgServiceTime = avgServiceTime;
         this.maxConnectionBandwidth = maxConnectionBandwidth;
@@ -30,20 +29,22 @@ public class TrafficGenerator {
      * Create and setup a new Start Connection.
      * @param num This Connection's number (serves as an ID).
      * @param prevTime The time from the previous Connection.
-     * @param numNodes The number of nodes in the physical network.
+     * @param src The src node (destination will be 2 nodes later)
      * @return Connection
      */
-    public Connection newConnectionStart(int num, double prevTime, int numNodes){
+    public Connection newConnectionStart(int num, double prevTime, int src){
+        int dest = src + 2;
         Connection start = new Connection();
 
         start.setIsEnd(false);
 
         start.setConnectionNum(num);
 
-        ExponentialDistribution exp = new ExponentialDistribution(this.avgArrivalTime);
-        start.calcTime(prevTime, exp.sample());
+        //ExponentialDistribution exp = new ExponentialDistribution(this.avgArrivalTime);
+        start.calcTime(prevTime, avgArrivalTime);
 
-        start.pickSrcAndDest(numNodes);
+        //start.pickSrcAndDest(numNodes);
+        start.pickSrcAndDestDebug(src, dest);
 
         UniformIntegerDistribution bw = new UniformIntegerDistribution(1, this.maxConnectionBandwidth);
         start.setBandwidth(bw.sample());
@@ -63,8 +64,8 @@ public class TrafficGenerator {
 
         end.setConnectionNum(start.getConnectionNum());
 
-        ExponentialDistribution exp = new ExponentialDistribution(this.avgServiceTime);
-        end.calcTime(start.getTime(), exp.sample());
+        //ExponentialDistribution exp = new ExponentialDistribution(this.avgServiceTime);
+        end.calcTime(start.getTime(), avgServiceTime);
 
         end.setSrcNode(start.getSrcNode());
 
