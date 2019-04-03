@@ -46,9 +46,9 @@ public class Connection {
     }
 
     /**
-     * For debugging.
-     * @param src
-     * @param dest
+     * For debugging only.
+     * @param src The desired source node
+     * @param dest The desired destination node
      */
     public void pickSrcAndDestDebug(int src, int dest){
         this.setSrcNode(src);
@@ -58,7 +58,7 @@ public class Connection {
     /**
      * Mechanism to release resources previously in use by this connection.
      * Assumes that the path is valid in the network.
-     * @param ntwk
+     * @param ntwk The physical network
      */
     public void releaseResources(PhysicalNetwork ntwk){
         Edge[][] edges = ntwk.getNetwork();

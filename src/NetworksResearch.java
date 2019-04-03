@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -31,15 +29,16 @@ public class NetworksResearch {
         //Initialize eventQueue with first connection
         double prevTime = 0;
         int idNum = 1;
-        int numConnectionsToMake = 50; //TODO: make this a parameter to be read in
+        int numConnectionsToMake = 50;
         int numRejectedConnections = 0;
 
-        Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());  //TODO: maybe initialize at beginning of main
-        Connection end = gen.newConnectionEnd(start);  //TODO: maybe initialize at beginning of main
+        Connection start = gen.newConnectionStart(idNum, prevTime, pNtwk.getNumNodes());
+        Connection end = gen.newConnectionEnd(start);
         start.setOther(end);
         eventQueue.add(start);
         eventQueue.add(end);
         numConnectionsToMake--;
+
         // Process events in the queue and create new nodes as needed.
         while(numConnectionsToMake > 0 || eventQueue.peek()!=null){
             Connection currentConnection = eventQueue.removeFirst();
@@ -49,22 +48,20 @@ public class NetworksResearch {
             if(!currentConnection.getIsEnd()){  // Handle start nodes
                 DijkstrasRoutingAlgorithm route = new DijkstrasRoutingAlgorithm(pNtwk);
                 if(route.routeTraffic(currentConnection.getSrcNode(), currentConnection.getDestNode())){ //if a path was found
-                    currentConnection.setPath(route.getPath()); //in connection
-                    currentConnection.setSlotsUsed(route.getSlots());  //in connection
-                    //End stuff done by routing algorithm
-                    currentConnection.claimResources(pNtwk);  //physical network
+                    currentConnection.setPath(route.getPath());
+                    currentConnection.setSlotsUsed(route.getSlots());
+                    currentConnection.claimResources(pNtwk);
                     vt.addConnection(currentConnection);
                     System.out.println("routed: " +
                                     "path:" + Arrays.toString(currentConnection.getPath())
                                     + " slot: " + Arrays.toString(currentConnection.getSlotsUsed())
                                     + "\n" + vt.toString());
                 }
-                else{
+                else{ //no path found
                     numRejectedConnections++;
                     System.out.println("----------Rejected!!-------------");
                     //remove the end connection from the queue
                     eventQueue.remove(currentConnection.getOther());
-                    //remove end node?
                 }
 
                 //Create new connections
@@ -80,7 +77,6 @@ public class NetworksResearch {
                 }
             }
             else{  // Handle end nodes
-                //TODO: process end: release resources/update resources used
                 System.out.println(currentConnection.getConnectionNum() + ": END");
                 currentConnection.releaseResources(pNtwk);
                 vt.removeConnection(currentConnection.getOther());

@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Created by Kimberly Orr in 2019.
+ * Class to route connections using Dijkstra's shortest path algorithm and first fit slot assignment.
+ */
 public class DijkstrasRoutingAlgorithm {
     private PhysicalNetwork pn; //the physical network from the main program
     private int[] path; //the path determined by the algorithm
@@ -21,7 +25,7 @@ public class DijkstrasRoutingAlgorithm {
     }
 
     /**
-     * Helper function for now (will need to clean this up big time)
+     * Function to be called by outside to route the traffic
      * @param src
      * @param dest
      */
@@ -143,7 +147,7 @@ public class DijkstrasRoutingAlgorithm {
     }
 
     /**
-     * maybe combine with determineSlots???
+     * Check to see if the path is available in the current slot range.
      * @param slot
      * @return
      */

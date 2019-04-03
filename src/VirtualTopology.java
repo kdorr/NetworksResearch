@@ -28,10 +28,18 @@ public class VirtualTopology {
         return str;
     }
 
+    /**
+     * Add connection to the virtual topology.
+     * @param c
+     */
     public void addConnection(Connection c){
         vt[c.getSrcNode()][c.getDestNode()].add(c);
     }
 
+    /**
+     * Remove connection from the virtual topology.
+     * @param c
+     */
     public void removeConnection(Connection c){
         vt[c.getSrcNode()][c.getDestNode()].remove(c);
     }

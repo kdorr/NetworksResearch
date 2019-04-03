@@ -4,7 +4,6 @@ public class Edge {
     private int distance;
     private int srcNode;
     private int destNode;
-    //list of adjacent nodes?
 
     public Edge(int numSlots, int fibers, int dist, int src, int dest) {
         slots = new boolean[numSlots];

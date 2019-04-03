@@ -19,7 +19,6 @@ public class TrafficGeneratorDebug {
         this.maxConnectionBandwidth = 1; // arbitrary default
     }
 
-    //TODO: add constructor that handles parameters (read in from a file in NetworksResearch.java
     public TrafficGeneratorDebug(double avgArrivalTime, double avgServiceTime, int maxConnectionBandwidth){
         this.avgArrivalTime = avgArrivalTime;
         this.avgServiceTime = avgServiceTime;
