@@ -1,4 +1,11 @@
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -109,6 +116,25 @@ public class NetworksResearch {
                 }
             }
         }
+    }
+
+    public static void writeToFile(String file, String s){
+        Path path = Paths.get(file);
+        try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)){
+            writer.write(s + "\n");
+        } catch( IOException x){
+            System.err.format("IOException: %s%n", x);
+        }
+    }
+    public static void slotUsage(PhysicalNetwork pn, double time){
+        //for upper triangle of physical links
+        //count[i] += edge[j][k].getSlots()[i]
+        //header: time, i.....
+        //time, count[i]
+    }
+
+    public static void edgeStress(PhysicalNetwork pn){
+        //for upper triangle of physical links,
     }
 
 }
