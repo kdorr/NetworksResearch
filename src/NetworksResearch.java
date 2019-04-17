@@ -18,19 +18,39 @@ import java.util.ListIterator;
 public class NetworksResearch {
 
     public static void main(String[] args) {
+
+        String inputFile = "";
+        if(args.length != 1){
+            System.err.println("Expecting one (string) argument with the file name");
+        }
+        else {
+            inputFile = args[0];
+        }
+
         //Read in Parameters
-        int numConnectionsToMake = 100;
+        ParameterParsing parser = new ParameterParsing(inputFile);
+        try {
+            parser.readParams();
+        } catch (IOException e){
+            System.err.println("main: IO Execption from reading the parameter file");
+        }
+
+        /**
+         * TODO: Clean this up a lot
+         */
+        boolean usingDetailedStats = parser.usingDetailedStats;
+        int numConnectionsToMake = parser.numConnectionsToMake;
         int numConnectionsMade = numConnectionsToMake; //helpful for summary stats
-        int avgArrivalTime = 2;
-        int avgServiceTime = 4;
-        int maxConnectionBandwidth = 1;
-        int snapshotFrequency = 5;
-        String networkFile = "ptDebug";
+        int avgArrivalTime = parser.avgArrivalTime;
+        int avgServiceTime = parser.avgServiceTime;
+        int maxConnectionBandwidth = parser.maxConnectionBandwidth;
+        int snapshotFrequency = parser.snapshotFrequency;
+        String networkFile = parser.networkFile;
         //output file names and setup
-        String slotUsageFile = "out/slotUsage.csv";
-        String summaryStatsFile = "out/summaryStats.csv";
-        String queueEventsFile = "out/queueEvents.csv";
-        String edgeStressFile = "out/edgeStress.csv";
+        String slotUsageFile = parser.slotUsageFile;
+        String summaryStatsFile = parser.summaryStatsFile;
+        String queueEventsFile = parser.queueEventsFile;
+        String edgeStressFile = parser.edgeStressFile;
         createFile(slotUsageFile);
         createFile(summaryStatsFile);
         createFile(queueEventsFile);
@@ -48,9 +68,10 @@ public class NetworksResearch {
         }
 
         //Set up output files
-        setUpSlotUsage(slotUsageFile, pNtwk);
-        setUpEdgeStress(edgeStressFile, pNtwk);
-
+        if(usingDetailedStats) {
+            setUpSlotUsage(slotUsageFile, pNtwk);
+            setUpEdgeStress(edgeStressFile, pNtwk);
+        }
         // Establish virtual topology
         VirtualTopology vt = new VirtualTopology(pNtwk.getNumNodes());
 
@@ -76,8 +97,8 @@ public class NetworksResearch {
         while(numConnectionsToMake > 0 || eventQueue.peek()!=null){
             Connection currentConnection = eventQueue.removeFirst();
 
-            queueEventsString += "\n" + currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ":";
-//            System.out.println(currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ":");
+            if(usingDetailedStats)
+                queueEventsString += "\n" + currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ":";
 
             /**
              * Handle start nodes
@@ -89,19 +110,18 @@ public class NetworksResearch {
                     currentConnection.setSlotsUsed(route.getSlots());
                     currentConnection.claimResources(pNtwk);
                     vt.addConnection(currentConnection);
-                    queueEventsString += "\nrouted: " +
-                            "path:" + Arrays.toString(currentConnection.getPath())
-                            + " slot: " + Arrays.toString(currentConnection.getSlotsUsed())
-                            + "\n" + vt.toString();
-//                    System.out.println("routed: " +
-//                                    "path:" + Arrays.toString(currentConnection.getPath())
-//                                    + " slot: " + Arrays.toString(currentConnection.getSlotsUsed())
-//                                    + "\n" + vt.toString());
+                    if(usingDetailedStats) {
+                        queueEventsString += "\nrouted: " +
+                                "path:" + Arrays.toString(currentConnection.getPath())
+                                + " slot: " + Arrays.toString(currentConnection.getSlotsUsed())
+                                + "\n" + vt.toString();
+                    }
                 }
                 else{ //no path found
                     numRejectedConnections++;
-                    queueEventsString += "\n----------Rejected!!-------------";
-//                    System.out.println("----------Rejected!!-------------");
+                    if(usingDetailedStats)
+                        queueEventsString += "\n----------Rejected!!-------------";
+
                     //remove the end connection from the queue
                     eventQueue.remove(currentConnection.getOther());
                 }
@@ -121,7 +141,7 @@ public class NetworksResearch {
                 /**
                  * Network snapshots
                  */
-                if(currentConnection.getConnectionNum() % snapshotFrequency == 0){
+                if(usingDetailedStats && currentConnection.getConnectionNum() % snapshotFrequency == 0){
                     slotUsage(slotUsageFile, pNtwk, currentConnection.getConnectionNum());
                     edgeStress(edgeStressFile, pNtwk, currentConnection.getConnectionNum());
                 }
@@ -133,16 +153,21 @@ public class NetworksResearch {
              * Handle end nodes
              */
             else{
-                queueEventsString += "\n" + currentConnection.getConnectionNum() + ": END";
-//                System.out.println(currentConnection.getConnectionNum() + ": END");
+                if(usingDetailedStats)
+                    queueEventsString += "\n" + currentConnection.getConnectionNum() + ": END";
+
                 currentConnection.releaseResources(pNtwk);
                 vt.removeConnection(currentConnection.getOther());
-                //System.out.println(vt.toString());
+
             }
         }
-//        System.out.println("rejected Connections: " + numRejectedConnections);
-        writeToFile(summaryStatsFile, "Total rejected connections: " + numRejectedConnections + "\nRejection percentage: " + (double)numRejectedConnections/numConnectionsMade);
-        writeToFile(queueEventsFile, queueEventsString);
+
+        writeToFile(summaryStatsFile, "numConnections: " + numConnectionsMade + ", avgArrivalTime: " + avgArrivalTime
+                + ", avgServiceTime: " + avgServiceTime
+                + "\nTotal rejected connections: " + numRejectedConnections
+                + "\nRejection percentage: " + (double)numRejectedConnections/numConnectionsMade);
+        if(usingDetailedStats)
+            writeToFile(queueEventsFile, queueEventsString);
     }
 
     /**
@@ -231,6 +256,7 @@ public class NetworksResearch {
     public static void edgeStress(String file, PhysicalNetwork pn, double time){
         int numInUse = 0;
         String output = time + ",";
+
         //for the upper triangle
         for(int r=0; r<pn.getNumNodes(); r++){
             for(int c=r+1; c<pn.getNumNodes(); c++){
@@ -241,6 +267,7 @@ public class NetworksResearch {
                         numInUse++;
                     }
                 }
+
                 // If not the last edge, calculate the percentage of slots in use for that edge and add a comma to the
                 // end of the output. If the last edge, don't add a comma at the end.
                 output += (r>=pn.getNumNodes()-2 && c>=pn.getNumNodes()-1)
