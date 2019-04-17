@@ -1,5 +1,7 @@
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,15 +20,27 @@ public class NetworksResearch {
     public static void main(String[] args) {
         //Read in Parameters
         int numConnectionsToMake = 100;
-        int numConnectionsMade = numConnectionsToMake;
+        int numConnectionsMade = numConnectionsToMake; //helpful for summary stats
+        int avgArrivalTime = 2;
+        int avgServiceTime = 4;
+        int maxConnectionBandwidth = 1;
+        int snapshotFrequency = 5;
+        String networkFile = "ptDebug";
+        //output file names and setup
         String slotUsageFile = "out/slotUsage.csv";
         String summaryStatsFile = "out/summaryStats.csv";
         String queueEventsFile = "out/queueEvents.csv";
+        String edgeStressFile = "out/edgeStress.csv";
+        createFile(slotUsageFile);
+        createFile(summaryStatsFile);
+        createFile(queueEventsFile);
+        createFile(edgeStressFile);
+        // initialization
         String queueEventsString = "";
-        int snapshotFrequency = 5;
+
 
         //Read in Network
-        PhysicalNetwork pNtwk = new PhysicalNetwork("ptDebug");
+        PhysicalNetwork pNtwk = new PhysicalNetwork(networkFile);
         try {
             pNtwk.createNetwork();
         } catch (IOException e){
@@ -35,12 +49,13 @@ public class NetworksResearch {
 
         //Set up output files
         setUpSlotUsage(slotUsageFile, pNtwk);
+        setUpEdgeStress(edgeStressFile, pNtwk);
 
         // Establish virtual topology
         VirtualTopology vt = new VirtualTopology(pNtwk.getNumNodes());
 
         //Create TrafficGenerator
-        TrafficGenerator gen = new TrafficGenerator(2, 3, 1); //arbitrary arrival and service times
+        TrafficGenerator gen = new TrafficGenerator(avgArrivalTime, avgServiceTime, maxConnectionBandwidth); //arbitrary arrival and service times
 
         //Generate queue
         LinkedList<Connection> eventQueue = new LinkedList();
@@ -108,6 +123,7 @@ public class NetworksResearch {
                  */
                 if(currentConnection.getConnectionNum() % snapshotFrequency == 0){
                     slotUsage(slotUsageFile, pNtwk, currentConnection.getConnectionNum());
+                    edgeStress(edgeStressFile, pNtwk, currentConnection.getConnectionNum());
                 }
 //                if(Math.round(currentConnection.getTime()) % snapshotFrequency == 0){
 //                    slotUsage(slotUsageFile, pNtwk, currentConnection.getTime());
@@ -154,6 +170,16 @@ public class NetworksResearch {
         }
     }
 
+    public static void createFile(String file){
+        Path path = Paths.get(file);
+        try {
+            Writer fw = new FileWriter(file, false);
+            fw.close();
+        }
+        catch(IOException e){
+            System.err.format("IOExecption: %s%n", e);
+        }
+    }
     public static void writeToFile(String file, String s){
         Path path = Paths.get(file);
         try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)){
@@ -193,8 +219,36 @@ public class NetworksResearch {
         writeToFile(file, output);
     }
 
-    public static void edgeStress(PhysicalNetwork pn){
-        //for upper triangle of physical links,
+    public static void setUpEdgeStress(String file, PhysicalNetwork pn){
+        String output = "ID,";
+        for(int r=0; r<pn.getNumNodes(); r++){
+            for(int c=r+1; c<pn.getNumNodes(); c++) {
+                output += (r>=pn.getNumNodes()-2 && c>=pn.getNumNodes()-1) ? (r + "" + c) : (r + "" + c + ",");
+            }
+        }
+        writeToFile(file, output);
+    }
+    public static void edgeStress(String file, PhysicalNetwork pn, double time){
+        int numInUse = 0;
+        String output = time + ",";
+        //for the upper triangle
+        for(int r=0; r<pn.getNumNodes(); r++){
+            for(int c=r+1; c<pn.getNumNodes(); c++){
+                numInUse = 0;
+                //for each slot
+                for(int slot=0; slot<pn.getNumSlots(); slot++){
+                    if(pn.getNetwork()[r][c]!=null && pn.getNetwork()[r][c].getSlots()[slot]) {
+                        numInUse++;
+                    }
+                }
+                // If not the last edge, calculate the percentage of slots in use for that edge and add a comma to the
+                // end of the output. If the last edge, don't add a comma at the end.
+                output += (r>=pn.getNumNodes()-2 && c>=pn.getNumNodes()-1)
+                        ? (double)numInUse/(double)pn.getNumSlots()
+                        : ((double)numInUse / (double)pn.getNumSlots()) + ",";
+            }
+        }
+        writeToFile(file, output);
     }
 
 }
