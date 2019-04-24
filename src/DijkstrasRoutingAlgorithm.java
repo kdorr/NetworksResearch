@@ -120,12 +120,27 @@ public class DijkstrasRoutingAlgorithm {
         boolean pathFound = false;
         int testSlot = 0;
         int[] range = {0}; //for generalization to more than one slot
-        while(!pathFound && testSlot<pn.getNumSlots()) {
+
+        ArrayList<Integer> slotOptions = new ArrayList<Integer>();
+        for(int i=0; i<pn.getNumSlots(); i++){
+            slotOptions.add(i);
+        }
+        int rand = (int)(Math.random()*(slotOptions.size()));
+        testSlot = slotOptions.get(rand);
+        while(!pathFound && !slotOptions.isEmpty()) {
             if(pathWithSelectedSlotsAvailable(testSlot)){
                 pathFound = true;
             }
             else {
-                testSlot++;
+                slotOptions.remove(rand);
+                //choose a new random slot to try
+                if(!slotOptions.isEmpty()) {
+                    rand = (int) (Math.random() * (slotOptions.size()));
+                    testSlot = slotOptions.get(rand);
+                }
+                else{
+                    return false;
+                }
             }
         }
 
