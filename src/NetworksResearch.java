@@ -26,7 +26,6 @@ public class NetworksResearch {
         else {
             inputFile = args[0];
         }
-
         //Read in Parameters
         ParameterParsing parser = new ParameterParsing(inputFile);
         try {
@@ -164,8 +163,8 @@ public class NetworksResearch {
 
         writeToFile(summaryStatsFile, "numConnections: " + numConnectionsMade + ", avgArrivalTime: " + avgArrivalTime
                 + ", avgServiceTime: " + avgServiceTime
-                + "\nTotal rejected connections: " + numRejectedConnections
-                + "\nRejection percentage: " + (double)numRejectedConnections/numConnectionsMade);
+                + "\nTotal rejected connections:\n" + numRejectedConnections
+                + "\nRejection percentage:\n" + (double)numRejectedConnections/numConnectionsMade);
         if(usingDetailedStats)
             writeToFile(queueEventsFile, queueEventsString);
     }
