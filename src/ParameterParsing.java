@@ -25,7 +25,7 @@ public class ParameterParsing {
         numConnectionsToMake = 100;
         avgArrivalTime = 2;
         avgServiceTime = 4;
-        maxConnectionBandwidth = 1;
+        maxConnectionBandwidth = 32;
         snapshotFrequency = 5;
         networkFile = "ptDebug";
         slotUsageFile = "out/slotUsage.csv";
