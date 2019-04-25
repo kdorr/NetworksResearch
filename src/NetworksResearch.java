@@ -97,14 +97,14 @@ public class NetworksResearch {
             Connection currentConnection = eventQueue.removeFirst();
 
             if(usingDetailedStats)
-                queueEventsString += "\n" + currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ":";
+                queueEventsString += "\n" + currentConnection.getConnectionNum() + ": src: " + currentConnection.getSrcNode() + ", dest: " + currentConnection.getDestNode() + ", bw: " + currentConnection.getBandwidth() + ":";
 
             /**
              * Handle start nodes
              */
             if(!currentConnection.getIsEnd()){
                 DijkstrasRoutingAlgorithm route = new DijkstrasRoutingAlgorithm(pNtwk);
-                if(route.routeTraffic(currentConnection.getSrcNode(), currentConnection.getDestNode())){ //if a path was found
+                if(route.routeTraffic(currentConnection.getSrcNode(), currentConnection.getDestNode(), currentConnection.getBandwidth())){ //if a path was found
                     currentConnection.setPath(route.getPath());
                     currentConnection.setSlotsUsed(route.getSlots());
                     currentConnection.claimResources(pNtwk);

@@ -46,7 +46,7 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
-        test.routeTraffic(3, 0);
+        test.routeTraffic(3, 0, 2);
         int[] path = test.getPath();
 
         //the path should be [0, 1, 2, 3] for this case (worked out on paper)
@@ -66,7 +66,7 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
-        test.routeTraffic(0, 3);
+        test.routeTraffic(0, 3, 2);
         int[] slots = test.getSlots();
         int[] expected = {0};
         assertArrayEquals(expected, slots);
@@ -81,7 +81,7 @@ public class DijkstraTest {
 
         //route more traffic from 0 to 3.
         DijkstrasRoutingAlgorithm test2 = new DijkstrasRoutingAlgorithm(pNtwk);
-        test2.routeTraffic(0, 3);
+        test2.routeTraffic(0, 3,2);
         slots = test2.getSlots();
         expected[0] = 1;
         assertArrayEquals(expected, slots); //assert that slots == {1};
@@ -107,7 +107,7 @@ public class DijkstraTest {
 
         //Checking edge case: routing on last available slot
         DijkstrasRoutingAlgorithm test3 = new DijkstrasRoutingAlgorithm(pNtwk);
-        test3.routeTraffic(0, 3);
+        test3.routeTraffic(0, 3,2);
         slots = test3.getSlots();
         expected[0] = 31;
         assertArrayEquals(expected, slots); //assert that slots == {1};
@@ -130,7 +130,7 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
-        test.routeTraffic(0, 3);
+        test.routeTraffic(0, 3,2);
         int[] slots = test.getSlots();
         int[] expected = {0};
         assertArrayEquals(expected, slots); //make sure the path routed correctly
@@ -142,7 +142,7 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test2 = new DijkstrasRoutingAlgorithm(pNtwk);
-        assertFalse(test2.routeTraffic(0,3));
+        assertFalse(test2.routeTraffic(0,3,2));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class DijkstraTest {
         }
 
         DijkstrasRoutingAlgorithm test = new DijkstrasRoutingAlgorithm(pNtwk);
-        test.routeTraffic(0, 3);
+        test.routeTraffic(0, 3,2);
         int[] slots = test.getSlots();
         int[] expected = {0};
         assertArrayEquals(expected, slots);
@@ -172,7 +172,7 @@ public class DijkstraTest {
         Connection rest;
         for(int i=1; i<32; i++){
             test3 = new DijkstrasRoutingAlgorithm(pNtwk);
-            assertTrue(test3.routeTraffic(0,3));
+            assertTrue(test3.routeTraffic(0,3,2));
             slots = test3.getSlots();
             expected[0] = i;
             assertArrayEquals(expected, slots);
@@ -185,7 +185,7 @@ public class DijkstraTest {
         }
 
         test3 = new DijkstrasRoutingAlgorithm(pNtwk);
-        assertFalse(test3.routeTraffic(0,3));
+        assertFalse(test3.routeTraffic(0,3,2));
 
     }
 }

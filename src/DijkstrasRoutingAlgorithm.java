@@ -29,9 +29,9 @@ public class DijkstrasRoutingAlgorithm {
      * @param src
      * @param dest
      */
-    public boolean routeTraffic(int src, int dest){
+    public boolean routeTraffic(int src, int dest, int bandwidth){
         determinePath(src, dest);
-        if(determineSlots()){  //if the connection wasn't rejected.
+        if(determineSlots(bandwidth)){  //if the connection wasn't rejected.
             return true;
         }
         else{
@@ -116,16 +116,23 @@ public class DijkstrasRoutingAlgorithm {
      * Only to be called after path determined. Only looking at one slot. Need to generalize. Also doesn't work with condition that no slots available.
      * @return
      */
-    public boolean determineSlots(){
+    public boolean determineSlots(int bandwidth){
         boolean pathFound = false;
-        int testSlot = 0;
-        int[] range = {0}; //for generalization to more than one slot
-        while(!pathFound && testSlot<pn.getNumSlots()) {
-            if(pathWithSelectedSlotsAvailable(testSlot)){
+        //int testSlot = 0;
+        int startingSlot = 0;
+        int[] range = new int[bandwidth]; //for generalization to more than one slot
+        for(int i=startingSlot; i<bandwidth; i++){
+            range[i] = i;
+        }
+        while(!pathFound && (startingSlot+bandwidth)<=pn.getNumSlots()) {
+            if(pathWithSelectedSlotsAvailable(range)){
                 pathFound = true;
             }
             else {
-                testSlot++;
+                startingSlot++;
+                for(int i=0; i<bandwidth; i++){
+                    range[i] = i+startingSlot;
+                }
             }
         }
 
@@ -134,8 +141,10 @@ public class DijkstrasRoutingAlgorithm {
             return false;
         }
 
-        slots = new int[1];
-        slots[0] = testSlot;
+        slots = new int[bandwidth];
+        for(int i=0; i<bandwidth; i++){
+            slots[i] = range[i];
+        }
         return true; // success!
 
         //for generalization to more than one slot:
@@ -148,13 +157,13 @@ public class DijkstrasRoutingAlgorithm {
 
     /**
      * Check to see if the path is available in the current slot range.
-     * @param slot
+     * @param slots
      * @return
      */
-    public boolean pathWithSelectedSlotsAvailable(int slot){
-        int[] range = {slot};
+    public boolean pathWithSelectedSlotsAvailable(int[] slots){
+        //int[] range = {slot};
         for(int i=0; i<path.length-1; i++){
-            if(!pn.getNetwork()[path[i]][path[i+1]].isSlotRangeFree(range) || !pn.getNetwork()[path[i+1]][path[i]].isSlotRangeFree(range)){ //are the slots from node i to node i+1 in the path free?
+            if(!pn.getNetwork()[path[i]][path[i+1]].isSlotRangeFree(slots) || !pn.getNetwork()[path[i+1]][path[i]].isSlotRangeFree(slots)){ //are the slots from node i to node i+1 in the path free?
                 return false;
             }
         }
